@@ -1,4 +1,4 @@
-name: energy-project-frontend-dev-deploy
+name: crypto-project-frontend-dev-deploy
 
 on:
   # push:
@@ -62,4 +62,4 @@ jobs:
           echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           rsync --delete -va -e 'ssh -p 21098 -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no' \
-            dist/ .htaccess  coinjzcf@198.54.114.151:public_html
+            dist/ .htaccess  coinjzcf@198.54.114.151:www
