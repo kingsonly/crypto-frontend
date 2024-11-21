@@ -1,23 +1,66 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowRight, Bitcoin, AlertCircle } from "lucide-react"
-
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ArrowRight, Bitcoin, Check } from "lucide-react";
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<{ [key: string]: string }>({});
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  // Handle signup redirect
+  const handleLoginRedirect = () => {
+    navigate('/signup');
+  };
+
+  // Validate email and password
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = (password: string) => /^(?=.*[A-Z]).{8,}$/.test(password);
+
+  const handleFocus = (field: string) => {
+    setError(prevError => {
+      const newError = { ...prevError };
+      delete newError[field];
+      return newError;
+    });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically handle the login logic
-    // For now, we'll just simulate an error for demonstration
-    setError('Invalid email or password. Please try again.')
-  }
+    e.preventDefault();
+
+    const newError: { [key: string]: string } = {};
+
+    if (!email.trim()) {
+      newError.email = 'Email is required';
+    } else if (!validateEmail(email)) {
+      newError.email = 'Please enter a valid email address';
+    }
+
+    if (!password.trim()) {
+      newError.password = 'Password is required';
+    } else if (!validatePassword(password)) {
+      newError.password = 'Password must be at least 8 characters long and contain an uppercase letter';
+    }
+
+    if (Object.keys(newError).length > 0) {
+      setError(newError);
+      return;
+    }
+
+    // Successful login
+    setSuccess(true);
+
+    // Redirect after 2 seconds
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 2000);
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden w-screen">
@@ -39,37 +82,10 @@ export default function Login() {
                   CoinShares Mining
                 </span>
               </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Services
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-              </div>
             </div>
           </div>
         </nav>
+
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
@@ -78,7 +94,18 @@ export default function Login() {
             </h1>
           </div>
 
+          {/* Success Message */}
+          {success && (
+            <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">
+              <div className="flex items-center">
+                <Check className="h-5 w-5 mr-2" />
+                <span>Login successful! Redirecting to dashboard...</span>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-300">Email</Label>
               <Input
@@ -87,10 +114,15 @@ export default function Login() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                onFocus={() => handleFocus('email')}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${
+                  error.email ? 'border-red-500' : 'border-gray-700'
+                }`}
               />
+              {error.email && <div className="text-red-300 text-sm">{error.email}</div>}
             </div>
+
+            {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-300">Password</Label>
               <Input
@@ -99,29 +131,28 @@ export default function Login() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                onFocus={() => handleFocus('password')}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${
+                  error.password ? 'border-red-500' : 'border-gray-700'
+                }`}
               />
+              {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
             </div>
 
-            {error && (
-              <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 mr-2" />
-                  <span>{error}</span>
-                </div>
-              </div>
-            )}
-
+            {/* Submit Button */}
             <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600">
               Login <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </form>
 
+          {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <p className="text-gray-400">
               Don't have an account?{' '}
-              <Button href="/signup" className="text-blue-400 hover:text-blue-300 transition-colors">
+              <Button
+                onClick={handleLoginRedirect}
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+              >
                 Sign up
               </Button>
             </p>
@@ -129,5 +160,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+  );
 }
