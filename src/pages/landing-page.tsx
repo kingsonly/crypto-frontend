@@ -27,6 +27,9 @@ export default function LandingPage() {
     navigate("/signup");
   };
 
+  const aboutUs = () => {
+    navigate("/about-us");
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -61,7 +64,9 @@ export default function LandingPage() {
               Revolutionizing the future of finance and energy through
               innovative Bitcoin mining solutions
             </p>
-            <Button className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
+            <Button 
+            onClick={aboutUs}
+            className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
               Explore Our Vision <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
