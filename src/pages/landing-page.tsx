@@ -12,10 +12,19 @@ import {
   Droplet,
 } from "lucide-react";
 import Footer from "@/components/ui/footer";
+import { useNavigate } from "react-router-dom";
 
+
+  
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
+  const handleClick = () => {
+    navigate("/signup");
+  };
+
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -252,7 +261,9 @@ export default function LandingPage() {
               Be part of the future of finance and energy. Invest in CoinShares
               Mining today and unlock the potential of Bitcoin.
             </p>
-            <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button
+             onClick={handleClick}
+            className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
               Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
