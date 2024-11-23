@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Mining1 from "../assets/images/mining_1.jpg";
+import Mining2 from "../assets/images/mining_2.jpg";
 import {
   ArrowRight,
-  Bitcoin,
   Zap,
   Globe,
   BarChart2,
@@ -12,7 +13,7 @@ import {
   Droplet,
 } from "lucide-react";
 
-
+import TopMenu from "../components/menu/TopMenu";
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
 
@@ -34,46 +35,7 @@ export default function LandingPage() {
       {/* Content wrapper */}
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
-                <Bitcoin className="h-8 w-8 text-yellow-400" />
-                <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                  CoinShares Mining
-                </span>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Services
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <TopMenu />
 
         {/* Hero Section */}
         <section className="min-h-screen flex items-center justify-center text-center px-4 md:px-6 lg:px-8 pt-16 relative overflow-hidden">
@@ -135,11 +97,9 @@ export default function LandingPage() {
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src={Mining1}
                   alt="Bitcoin Mining Facility"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-2xl relative"
+                  className="rounded-lg shadow-2xl relative w-[100%] h-[400px]"
                 />
               </div>
             </div>
@@ -227,13 +187,11 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="order-1 md:order-2 relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                <div className=" absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src={Mining2}
                   alt="Bitcoin Mining Hardware"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-2xl relative"
+                  className="rounded-lg shadow-2xl relative w-[100%] h-[400px]"
                 />
               </div>
             </div>
