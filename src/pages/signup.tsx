@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { Bitcoin, AlertCircle, Check } from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
 import axios from 'axios'
+import Navbar from '@/components/ui/Navbar';
+
 
 export default function Signup() {
   const [userName, setUserName] = useState('')
@@ -41,7 +43,7 @@ export default function Signup() {
 
     // Set loading state to true when the request starts
     setIsLoading(true);
-    
+
     // Clear previous errors
     setError({})
     setSuccess(false)
@@ -89,86 +91,86 @@ export default function Signup() {
     // Here you would typically handle the signup logic
     // setSuccess(true)
 
-    let data:any = {
-      name:name,
-      email:email,
-      password:password,
-      username:userName,
+    let data: any = {
+      name: name,
+      email: email,
+      password: password,
+      username: userName,
     }
 
-   
+
     await axios.post('https://api.coinsharesmining.com/api/signup', data)
-    .then(function (response) {
-      console.log('API Response:', response.data);  // Log the full response to inspect its structure
-  
-      if (response.data.status === 'success') {
-        setSuccess(true);
-        setErrorMessages([]);  // Clear errors if successful
-      } else {
-        let errors: string[] = [];
-  
-        // Check if there are any field-specific errors in the response data
-        if (response.data.data) {
-          Object.keys(response.data.data).forEach((field) => {
-            const fieldErrors = response.data.data[field];
-  
-            // Ensure fieldErrors is an array before processing
-            if (Array.isArray(fieldErrors)) {
-              // Only push the error messages, not the field names
-              fieldErrors.forEach((error) => {
-                errors.push(error);  // Push only the error message
-              });
-            }
-          });
-        }
-  
-        // If no specific errors, check the general message (fallback)
-        if (errors.length === 0 && response.data.message) {
-          errors.push(response.data.message);  // Push the general message if no field-specific errors
-        }
-  
-        setSuccess(false);
-        setErrorMessages(errors);  // Display the errors in the state
-      }
-    })
-    .catch(function (error) {
-      console.log('Error occurred:', error);
-  
-      // Handle server errors here
-      if (error.response) {
-        const errorResponse = error.response.data;
-        console.log('Error response data:', errorResponse);  // Log the error response
-  
-        let errors: string[] = [];
-        // Check for any errors in the response data
-        if (errorResponse.data) {
-          Object.keys(errorResponse.data).forEach((field) => {
-            const fieldErrors = errorResponse.data[field];
-  
-            console.log(`Field: ${field}, Errors:`, fieldErrors);  // Log field-specific errors
-  
-            if (Array.isArray(fieldErrors)) {
-              fieldErrors.forEach((error) => {
-                errors.push(error);  // Only push the error message
-              });
-            }
-          });
-  
-          setErrorMessages(errors);
-        } else if (errorResponse.message) {
-          setErrorMessages([errorResponse.message]);
+      .then(function (response) {
+        console.log('API Response:', response.data);  // Log the full response to inspect its structure
+
+        if (response.data.status === 'success') {
+          setSuccess(true);
+          setErrorMessages([]);  // Clear errors if successful
         } else {
-          setErrorMessages(['An unexpected error occurred. Please try again later.']);
+          let errors: string[] = [];
+
+          // Check if there are any field-specific errors in the response data
+          if (response.data.data) {
+            Object.keys(response.data.data).forEach((field) => {
+              const fieldErrors = response.data.data[field];
+
+              // Ensure fieldErrors is an array before processing
+              if (Array.isArray(fieldErrors)) {
+                // Only push the error messages, not the field names
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Push only the error message
+                });
+              }
+            });
+          }
+
+          // If no specific errors, check the general message (fallback)
+          if (errors.length === 0 && response.data.message) {
+            errors.push(response.data.message);  // Push the general message if no field-specific errors
+          }
+
+          setSuccess(false);
+          setErrorMessages(errors);  // Display the errors in the state
         }
-      } else if (error.request) {
-        setErrorMessages(['Unable to reach the server. Please check your internet connection.']);
-      } else {
-        setErrorMessages(['An error occurred while processing your request.']);
-      }
-  
-      setSuccess(false);  // Update success state in case of error
-    });
-    
+      })
+      .catch(function (error) {
+        console.log('Error occurred:', error);
+
+        // Handle server errors here
+        if (error.response) {
+          const errorResponse = error.response.data;
+          console.log('Error response data:', errorResponse);  // Log the error response
+
+          let errors: string[] = [];
+          // Check for any errors in the response data
+          if (errorResponse.data) {
+            Object.keys(errorResponse.data).forEach((field) => {
+              const fieldErrors = errorResponse.data[field];
+
+              console.log(`Field: ${field}, Errors:`, fieldErrors);  // Log field-specific errors
+
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Only push the error message
+                });
+              }
+            });
+
+            setErrorMessages(errors);
+          } else if (errorResponse.message) {
+            setErrorMessages([errorResponse.message]);
+          } else {
+            setErrorMessages(['An unexpected error occurred. Please try again later.']);
+          }
+        } else if (error.request) {
+          setErrorMessages(['Unable to reach the server. Please check your internet connection.']);
+        } else {
+          setErrorMessages(['An error occurred while processing your request.']);
+        }
+
+        setSuccess(false);  // Update success state in case of error
+      });
+
     setIsLoading(false);
   }
 
@@ -191,7 +193,9 @@ export default function Signup() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
+
         <TopMenu />
+
         <div className="w-full max-w-md">
           <div className="text-center mb-8 mt-10">
             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
@@ -202,17 +206,17 @@ export default function Signup() {
 
           {/* Show general error messages */}
           {errorMessages.length > 0 && (
-  <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
-    <div className="flex items-center">
-      <AlertCircle className="h-5 w-5 mr-2" />
-      <span>
-        {errorMessages.map((msg, index) => (
-          <div key={index}>{msg}</div>
-        ))}
-      </span>
-    </div>
-  </div>
-)}
+            <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <span>
+                  {errorMessages.map((msg, index) => (
+                    <div key={index}>{msg}</div>
+                  ))}
+                </span>
+              </div>
+            </div>
+          )}
 
           {success ? (
             <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative" role="alert">
@@ -228,7 +232,7 @@ export default function Signup() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
-                 <div className="space-y-2">
+              <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-300">UserName</Label>
                 <Input
                   id="userName"
@@ -237,9 +241,8 @@ export default function Signup() {
                   value={userName}
                   onChange={(e) => setUserName(e.target.value)}
                   onFocus={() => handleFocus('userName')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${
-                    error.userName ? 'border-red-500' : 'border-gray-700'
-                  }`}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.userName ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
                 {error.userName && (
                   <div className="text-red-300 text-sm">{error.userName}</div>
@@ -316,12 +319,12 @@ export default function Signup() {
               </div>
 
               <Button
-                      type="submit"
-                   disabled={isLoading} // Disable the button when loading
-                   className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
->
-               {isLoading ? "Loading..." : "Sign Up"}
-                </Button>
+                type="submit"
+                disabled={isLoading} // Disable the button when loading
+                className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
+              >
+                {isLoading ? "Loading..." : "Sign Up"}
+              </Button>
             </form>
           )}
 
