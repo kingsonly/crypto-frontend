@@ -11,11 +11,24 @@ import {
   Sun,
   Wind,
   Droplet,
+  Navigation,
 } from "lucide-react";
-
+import Footer from "@/components/ui/footer";
+import { useNavigate } from "react-router-dom";
+import Navbar from "@/components/ui/Navbar";
 import TopMenu from "../components/menu/TopMenu";
+
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+
+  const handleClick = () => {
+    navigate("/signup");
+  };
+
+  const aboutUs = () => {
+    navigate("/about-us");
+  };
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -34,6 +47,7 @@ export default function LandingPage() {
 
       {/* Content wrapper */}
       <div className="relative z-10">
+
         {/* Navigation */}
         <TopMenu />
 
@@ -51,7 +65,9 @@ export default function LandingPage() {
               Revolutionizing the future of finance and energy through
               innovative Bitcoin mining solutions
             </p>
-            <Button className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
+            <Button
+              onClick={aboutUs}
+              className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
               Explore Our Vision <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -144,11 +160,6 @@ export default function LandingPage() {
                 </p>
               </div>
             </div>
-            <div className="mt-12 text-center">
-              <Button className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
-                Discover Our Facilities <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
           </div>
         </section>
 
@@ -209,109 +220,15 @@ export default function LandingPage() {
               Be part of the future of finance and energy. Invest in CoinShares
               Mining today and unlock the potential of Bitcoin.
             </p>
-            <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button
+              onClick={handleClick}
+              className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
               Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="bg-black py-12 px-4 md:px-6 lg:px-8 border-t border-gray-800">
-          <div className="max-w-full mx-auto grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                CoinShares Mining
-              </h3>
-              <p className="text-gray-400">
-                Building the future of Bitcoin mining, one block at a time.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-4 text-blue-300">
-                Quick Links
-              </h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-blue-400 transition-colors">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-400 transition-colors">
-                    Our Facilities
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-400 transition-colors">
-                    Investor Relations
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-blue-400 transition-colors">
-                    Careers
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-4 text-cyan-300">
-                Resources
-              </h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-cyan-400 transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-cyan-400 transition-colors">
-                    Whitepaper
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-cyan-400 transition-colors">
-                    FAQ
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-cyan-400 transition-colors">
-                    Support
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-xl font-semibold mb-4 text-teal-300">
-                Connect
-              </h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>
-                  <a href="#" className="hover:text-teal-400 transition-colors">
-                    Twitter
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-teal-400 transition-colors">
-                    LinkedIn
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-teal-400 transition-colors">
-                    Telegram
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-teal-400 transition-colors">
-                    Discord
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-12 text-center text-sm text-gray-600">
-            <p>&copy; 2024 CoinShares Mining. All rights reserved.</p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </div>
   );

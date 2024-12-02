@@ -165,9 +165,8 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => handleFocus('email')}
-                className={`bg-gray-800 text-white placeholder-gray-400 ${
-                  error.email ? 'border-red-500' : 'border-gray-700'
-                }`}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.email ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
               {error.email && <div className="text-red-300 text-sm">{error.email}</div>}
             </div>
@@ -182,9 +181,8 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => handleFocus('password')}
-                className={`bg-gray-800 text-white placeholder-gray-400 ${
-                  error.password ? 'border-red-500' : 'border-gray-700'
-                }`}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
               {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
             </div>
@@ -214,5 +212,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+
   );
 }
