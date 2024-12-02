@@ -1,6 +1,56 @@
 import { Bitcoin } from "lucide-react";
+import { useEffect, useState } from "react";
+
+
+
 
 export default function TopMenu() {
+  const [isLoggedin, setIsLoggedin] = useState(false);
+ useEffect(()=> {
+   if(localStorage.getItem("user") !== null) {
+       setIsLoggedin(true);
+   }
+ },[])
+ const renderOptionalMenu = () => {
+  if(isLoggedin){
+    return(
+      <span>
+        <a
+                    href="/dashboard"
+                    className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Dashboard
+                  </a>
+                  <a
+                    href="/logout"
+                    className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                  >
+                    Logout
+                  </a>
+      </span>
+    )
+  }
+  
+
+
+  return(
+    <span>
+      <a
+                  href="/login"
+                  className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                >
+                  Login
+                </a>
+                <a
+                  href="/signup"
+                  className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+                >
+                  Signup
+                </a>
+                
+    </span>
+  )
+ }
   return (
     <div>
       <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
@@ -32,18 +82,7 @@ export default function TopMenu() {
                 >
                   pricing
                 </a>
-                <a
-                  href="/login"
-                  className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                >
-                  Login
-                </a>
-                <a
-                  href="/signup"
-                  className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                >
-                  Signup
-                </a>
+                {renderOptionalMenu()}
               </div>
             </div>
           </div>

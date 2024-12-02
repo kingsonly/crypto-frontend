@@ -5,15 +5,16 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Bitcoin, AlertCircle, Check } from "lucide-react"
+import { Bitcoin, Check} from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
-import Footer from '@/components/ui/footer';
-
+import axios from 'axios'
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -34,8 +35,12 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    setIsLoading(true);
+    setError({}); // Clear previous errors
+    setErrorMessages([]); // Clear previous error messages
 
     const newError: { [key: string]: string } = {};
 
@@ -53,16 +58,59 @@ export default function Login() {
 
     if (Object.keys(newError).length > 0) {
       setError(newError);
+      setIsLoading(false);
       return;
     }
 
     // Successful login
-    setSuccess(true);
+    let data: any = {
+      email: email,
+      password: password,
+    }
+     
+    await axios.post('https://api.coinsharesmining.com/api/login', data)
+    .then(function (response) {
+      console.log('API Response:', response.data);  // Log the full response to inspect its structure
+  
+      if (response.data.data.status === 'success') {
+        // Save the user's info and token to localStorage
+        const { name, email, token } = response.data.data;  // Assuming the response contains this data
+        localStorage.setItem('user', JSON.stringify({ name, email, token }));
 
-    // Redirect after 2 seconds
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 2000);
+        setIsLoading(false); // Trigger success message
+        navigate('/dashboard');
+        
+      } 
+    })
+    .catch(function (error) {
+      setIsLoading(false);
+      console.log('Error occurred:', error);
+
+      setSuccess(false);  // Update success state in case of error
+
+      if (!error.response) {
+        // Handle network error or no response
+        setErrorMessages(['Network error: Please check your internet connection.']);
+      } else {
+        const errorResponse = error.response.data;
+
+        // Display API error messages if available
+        if (errorResponse.message) {
+          if (Array.isArray(errorResponse.message)) {
+            setErrorMessages(errorResponse.message); // For an array of messages
+          } else {
+            setErrorMessages([errorResponse.message]); // Single error message
+          }
+        } else {
+          setErrorMessages(['An unexpected error occurred. Please try again.']);
+        }
+      }
+    })
+    .finally(() => {
+      setIsLoading(false); // Ensure loading state is turned off
+    });
+      // setIsLoading(false);
+    // });
   };
 
   return (
@@ -76,9 +124,7 @@ export default function Login() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-
         <TopMenu />
-
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
@@ -96,6 +142,17 @@ export default function Login() {
               </div>
             </div>
           )}
+
+          {/* Error Messages */}
+         {errorMessages.length > 0 && (
+            <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">
+              <ul className="list-disc list-inside">
+            {errorMessages.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+         </ul>
+      </div>
+)}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Field */}
@@ -131,9 +188,13 @@ export default function Login() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600">
-              Login <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            <Button
+                      type="submit"
+                   disabled={isLoading} // Disable the button when loading
+                   className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
+>
+               {isLoading ? "Loading..." : "Log in"}
+                </Button>
           </form>
 
           {/* Sign Up Link */}
