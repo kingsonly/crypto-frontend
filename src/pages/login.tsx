@@ -77,13 +77,13 @@ export default function Login() {
         const { name, email, token } = response.data.data;  // Assuming the response contains this data
         localStorage.setItem('user', JSON.stringify({ name, email, token }));
 
-        setSuccess(true);  // Trigger success message
-        setTimeout(() => {
-            navigate('/dashboard');
-          }, 2000);
+        setIsLoading(false); // Trigger success message
+        navigate('/dashboard');
+        
       } 
     })
     .catch(function (error) {
+      setIsLoading(false);
       console.log('Error occurred:', error);
 
       setSuccess(false);  // Update success state in case of error
