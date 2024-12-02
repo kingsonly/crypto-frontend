@@ -1,12 +1,14 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ArrowRight, Bitcoin, Check } from "lucide-react";
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { ArrowRight, Bitcoin, AlertCircle, Check } from "lucide-react"
+import TopMenu from "../components/menu/TopMenu";
 import Footer from '@/components/ui/footer';
+
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -74,18 +76,8 @@ export default function Login() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
-                <Bitcoin className="h-8 w-8 text-yellow-400" />
-                <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                  CoinShares Mining
-                </span>
-              </div>
-            </div>
-          </div>
-        </nav>
+
+        <TopMenu />
 
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
@@ -116,9 +108,8 @@ export default function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onFocus={() => handleFocus('email')}
-                className={`bg-gray-800 text-white placeholder-gray-400 ${
-                  error.email ? 'border-red-500' : 'border-gray-700'
-                }`}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.email ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
               {error.email && <div className="text-red-300 text-sm">{error.email}</div>}
             </div>
@@ -133,9 +124,8 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 onFocus={() => handleFocus('password')}
-                className={`bg-gray-800 text-white placeholder-gray-400 ${
-                  error.password ? 'border-red-500' : 'border-gray-700'
-                }`}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
               {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
             </div>
@@ -161,6 +151,6 @@ export default function Login() {
         </div>
       </div>
     </div>
-    
+
   );
 }

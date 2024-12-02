@@ -5,21 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Bitcoin, Check } from "lucide-react"
+import { Bitcoin, AlertCircle, Check } from "lucide-react"
+import TopMenu from "../components/menu/TopMenu";
+import axios from 'axios'
 import Navbar from '@/components/ui/Navbar';
 
+
 export default function Signup() {
+  const [userName, setUserName] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<{ [key: string]: string }>({})
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate(); // Initialize the useNavigate hook
 
 
-   // Handle login redirect
-   const handleLoginRedirect = () => {
+  // Handle login redirect
+  const handleLoginRedirect = () => {
     navigate('/login'); // This will redirect to the login page
   };
 
@@ -32,14 +38,22 @@ export default function Signup() {
     return /^(?=.*[A-Z]).{8,}$/.test(password)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Set loading state to true when the request starts
+    setIsLoading(true);
 
     // Clear previous errors
     setError({})
     setSuccess(false)
 
     let newError: { [key: string]: string } = {}
+
+    // UserName validation
+    if (!userName.trim()) {
+      newError.userName = 'UserName is required'
+    }
 
     // Name validation
     if (!name.trim()) {
@@ -70,11 +84,94 @@ export default function Signup() {
     // If there are any errors, prevent form submission
     if (Object.keys(newError).length > 0) {
       setError(newError)
+      setIsLoading(false); // Stop loading if there are errors
       return
     }
 
     // Here you would typically handle the signup logic
-    setSuccess(true)
+    // setSuccess(true)
+
+    let data: any = {
+      name: name,
+      email: email,
+      password: password,
+      username: userName,
+    }
+
+
+    await axios.post('https://api.coinsharesmining.com/api/signup', data)
+      .then(function (response) {
+        console.log('API Response:', response.data);  // Log the full response to inspect its structure
+
+        if (response.data.status === 'success') {
+          setSuccess(true);
+          setErrorMessages([]);  // Clear errors if successful
+        } else {
+          let errors: string[] = [];
+
+          // Check if there are any field-specific errors in the response data
+          if (response.data.data) {
+            Object.keys(response.data.data).forEach((field) => {
+              const fieldErrors = response.data.data[field];
+
+              // Ensure fieldErrors is an array before processing
+              if (Array.isArray(fieldErrors)) {
+                // Only push the error messages, not the field names
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Push only the error message
+                });
+              }
+            });
+          }
+
+          // If no specific errors, check the general message (fallback)
+          if (errors.length === 0 && response.data.message) {
+            errors.push(response.data.message);  // Push the general message if no field-specific errors
+          }
+
+          setSuccess(false);
+          setErrorMessages(errors);  // Display the errors in the state
+        }
+      })
+      .catch(function (error) {
+        console.log('Error occurred:', error);
+
+        // Handle server errors here
+        if (error.response) {
+          const errorResponse = error.response.data;
+          console.log('Error response data:', errorResponse);  // Log the error response
+
+          let errors: string[] = [];
+          // Check for any errors in the response data
+          if (errorResponse.data) {
+            Object.keys(errorResponse.data).forEach((field) => {
+              const fieldErrors = errorResponse.data[field];
+
+              console.log(`Field: ${field}, Errors:`, fieldErrors);  // Log field-specific errors
+
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Only push the error message
+                });
+              }
+            });
+
+            setErrorMessages(errors);
+          } else if (errorResponse.message) {
+            setErrorMessages([errorResponse.message]);
+          } else {
+            setErrorMessages(['An unexpected error occurred. Please try again later.']);
+          }
+        } else if (error.request) {
+          setErrorMessages(['Unable to reach the server. Please check your internet connection.']);
+        } else {
+          setErrorMessages(['An error occurred while processing your request.']);
+        }
+
+        setSuccess(false);  // Update success state in case of error
+      });
+
+    setIsLoading(false);
   }
 
   const handleFocus = (field: string) => {
@@ -96,7 +193,8 @@ export default function Signup() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <Navbar />
+
+        <TopMenu />
 
         <div className="w-full max-w-md">
           <div className="text-center mb-8 mt-10">
@@ -106,20 +204,52 @@ export default function Signup() {
             </h1>
           </div>
 
+          {/* Show general error messages */}
+          {errorMessages.length > 0 && (
+            <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <span>
+                  {errorMessages.map((msg, index) => (
+                    <div key={index}>{msg}</div>
+                  ))}
+                </span>
+              </div>
+            </div>
+          )}
+
           {success ? (
             <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative" role="alert">
               <div className="flex items-center">
                 <Check className="h-5 w-5 mr-2" />
                 <span>Account created successfully! You can now log in.</span>
-                <Button 
-                 onClick={handleLoginRedirect}
-                className="text-blue-400 hover:text-blue-300 transition-colors">
-                Log in
-             </Button>
+                <Button
+                  onClick={handleLoginRedirect}
+                  className="text-blue-400 hover:text-blue-300 transition-colors">
+                  Log in
+                </Button>
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-gray-300">UserName</Label>
+                <Input
+                  id="userName"
+                  type="text"
+                  placeholder="Enter UserName"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  onFocus={() => handleFocus('userName')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.userName ? 'border-red-500' : 'border-gray-700'
+                    }`}
+                />
+                {error.userName && (
+                  <div className="text-red-300 text-sm">{error.userName}</div>
+                )}
+              </div>
+
+
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-300">Full Name</Label>
                 <Input
@@ -129,9 +259,8 @@ export default function Signup() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onFocus={() => handleFocus('name')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${
-                    error.name ? 'border-red-500' : 'border-gray-700'
-                  }`}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.name ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
                 {error.name && (
                   <div className="text-red-300 text-sm">{error.name}</div>
@@ -147,9 +276,8 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onFocus={() => handleFocus('email')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${
-                    error.email ? 'border-red-500' : 'border-gray-700'
-                  }`}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.email ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
                 {error.email && (
                   <div className="text-red-300 text-sm">{error.email}</div>
@@ -165,9 +293,8 @@ export default function Signup() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onFocus={() => handleFocus('password')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${
-                    error.password ? 'border-red-500' : 'border-gray-700'
-                  }`}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
                 {error.password && (
                   <div className="text-red-300 text-sm">{error.password}</div>
@@ -183,25 +310,28 @@ export default function Signup() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   onFocus={() => handleFocus('confirmPassword')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${
-                    error.confirmPassword ? 'border-red-500' : 'border-gray-700'
-                  }`}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.confirmPassword ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
                 {error.confirmPassword && (
                   <div className="text-red-300 text-sm">{error.confirmPassword}</div>
                 )}
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600">
-                Sign Up <ArrowRight className="ml-2 h-5 w-5" />
+              <Button
+                type="submit"
+                disabled={isLoading} // Disable the button when loading
+                className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
+              >
+                {isLoading ? "Loading..." : "Sign Up"}
               </Button>
             </form>
           )}
 
           <div className="mt-6 text-center">
-               <p className="text-gray-400">
-                  Already have an account?{' '}
-              
+            <p className="text-gray-400">
+              Already have an account?{' '}
+
             </p>
           </div>
         </div>
@@ -209,4 +339,3 @@ export default function Signup() {
     </div>
   )
 }
-       

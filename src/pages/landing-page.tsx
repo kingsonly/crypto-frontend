@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import Mining1 from "../assets/images/mining_1.jpg";
+import Mining2 from "../assets/images/mining_2.jpg";
 import {
   ArrowRight,
-  Bitcoin,
   Zap,
   Globe,
   BarChart2,
@@ -15,9 +16,7 @@ import {
 import Footer from "@/components/ui/footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/ui/Navbar";
-
-
-  
+import TopMenu from "../components/menu/TopMenu";
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -48,7 +47,9 @@ export default function LandingPage() {
 
       {/* Content wrapper */}
       <div className="relative z-10">
-        <Navbar />
+
+        {/* Navigation */}
+        <TopMenu />
 
         {/* Hero Section */}
         <section className="min-h-screen flex items-center justify-center text-center px-4 md:px-6 lg:px-8 pt-16 relative overflow-hidden">
@@ -64,9 +65,9 @@ export default function LandingPage() {
               Revolutionizing the future of finance and energy through
               innovative Bitcoin mining solutions
             </p>
-            <Button 
-            onClick={aboutUs}
-            className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
+            <Button
+              onClick={aboutUs}
+              className="bg-gradient-to-r from-blue-500 to-teal-500 text-white hover:from-blue-600 hover:to-teal-600 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in-up animation-delay-600">
               Explore Our Vision <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
@@ -112,11 +113,9 @@ export default function LandingPage() {
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src={Mining1}
                   alt="Bitcoin Mining Facility"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-2xl relative"
+                  className="rounded-lg shadow-2xl relative w-[100%] h-[400px]"
                 />
               </div>
             </div>
@@ -199,13 +198,11 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="order-1 md:order-2 relative group">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+                <div className=" absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src={Mining2}
                   alt="Bitcoin Mining Hardware"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-2xl relative"
+                  className="rounded-lg shadow-2xl relative w-[100%] h-[400px]"
                 />
               </div>
             </div>
@@ -224,8 +221,8 @@ export default function LandingPage() {
               Mining today and unlock the potential of Bitcoin.
             </p>
             <Button
-             onClick={handleClick}
-            className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+              onClick={handleClick}
+              className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
               Get Started Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
