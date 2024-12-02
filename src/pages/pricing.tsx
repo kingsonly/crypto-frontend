@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Check, Bitcoin, DollarSign } from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
+import Footer from "@/components/ui/footer";
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden w-screen">
@@ -117,7 +118,7 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Footer (you can reuse the footer from the main page) */}
+        <Footer />
       </div>
     </div>
   )
