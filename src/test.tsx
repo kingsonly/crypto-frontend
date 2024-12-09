@@ -1,209 +1,408 @@
-// 'use client'
+import { useState,useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Bitcoin } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
+import axios from "axios";
 
-// import { useState } from 'react'
-// import { useNavigate } from 'react-router-dom';
-// import { Button } from "@/components/ui/button"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { ArrowRight, Bitcoin, Check} from "lucide-react"
-// import TopMenu from "../components/menu/TopMenu";
-// import axios from 'axios'
+function Notification({
+  message,
+  type,
+}: {
+  message: string;
+  type: "success" | "error";
+}) {
+  return (
+    <div
+      className={`p-3 rounded-lg mb-4 text-sm ${
+        type === "success"
+          ? "bg-green-600 text-white"
+          : "bg-red-600 text-white"
+      }`}
+    >
+      {message}
+    </div>
+  );
+}
 
-// export default function Login() {
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const [error, setError] = useState<{ [key: string]: string }>({});
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [errorMessages, setErrorMessages] = useState<string[]>([])
-//   const [success, setSuccess] = useState(false);
-//   const navigate = useNavigate();
+type CryptoType = "Bitcoin" | "Ethereum";
 
-//   // Handle signup redirect
-//   const handleLoginRedirect = () => {
-//     navigate('/signup');
-//   };
+type Deposit = {
+  id: number;
+  amount: string;
+  date: string;
+  currency: CryptoType;
+  status: "Pending" | "Confirmed" | "Failed";
+};
 
-//   // Validate email and password
-//   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-//   const validatePassword = (password: string) => /^(?=.*[A-Z]).{8,}$/.test(password);
+export default function DepositTab() {
+  const [selectedCrypto, setSelectedCrypto] = useState<CryptoType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(false);
+  const [newDeposit, setNewDeposit] = useState();
+  // const [allDeposit, setAllDeposit] = useState([]);
 
-//   const handleFocus = (field: string) => {
-//     setError(prevError => {
-//       const newError = { ...prevError };
-//       delete newError[field];
-//       return newError;
-//     });
-//   };
 
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-    
-//     setIsLoading(true);
-
-//     const newError: { [key: string]: string } = {};
-
-//     if (!email.trim()) {
-//       newError.email = 'Email is required';
-//     } else if (!validateEmail(email)) {
-//       newError.email = 'Please enter a valid email address';
-//     }
-
-//     if (!password.trim()) {
-//       newError.password = 'Password is required';
-//     } else if (!validatePassword(password)) {
-//       newError.password = 'Password must be at least 8 characters long and contain an uppercase letter';
-//     }
-
-//     if (Object.keys(newError).length > 0) {
-//       setError(newError);
-//       setIsLoading(false);
-//       return;
-//     }
-
-//     // Successful login
-//     let data: any = {
-//       email: email,
-//       password: password,
-//     }
-     
-//     await axios.post('https://api.coinsharesmining.com/api/login', data)
-//     .then(function (response) {
-//       console.log('API Response:', response.data);  // Log the full response to inspect its structure
   
-//       if (response.data.data.status === 'success') {
-//         // Save the user's info and token to localStorage
-//         const { name, email, token } = response.data.data;  // Assuming the response contains this data
-//         localStorage.setItem('user', JSON.stringify({ name, email, token }));
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [depositError, setDepositError] = useState<string | null>(null);
+  const baseUrl = import.meta.env.VITE_API_URL
+  const [isDepositComplete, setIsDepositComplete] = useState(false);
+  const [depositSuccessMessage, setDepositSuccessMessage] = useState<string | null>(null);
 
-//         setSuccess(true);  // Trigger success message
-//         setTimeout(() => {
-//             navigate('/dashboard');
-//           }, 2000);
-//       } 
-//     })
-//     .catch(function (error) {
-//       console.log('Error occurred:', error);
-//       setSuccess(false);  // Update success state in case of error
-//       setIsLoading(false);
-//     });
-//   };
+  const [deposits, setDeposits] = useState([
+   
+  ]);
+useEffect(()=> {
+  let getToken:any = JSON.parse(localStorage.getItem('user'))
+  console.log('message',getToken)
+  setToken(getToken.token)
+  getDeposits();
+},[])
+ 
+const handleViewDeposit = (deposit:any) => {
+  setDeposits(deposit); // Set the deposit being viewed
+  setIsModalOpen(true); // Open the modal
+  setIsDepositComplete(true); // Show the barcode and "Confirm Payment" button
+};
+  const getDeposits = async () => {
+    let getToken:any = JSON.parse(localStorage.getItem('user'))
+    await axios.post(`${ baseUrl }/transaction`,
+      {type:"deposit"},
+      {
+        headers: {
+          Authorization: `Bearer ${getToken.token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        },
+      }
+    ).then((response) => {
+      console.log(response.data)
+      if(response.data.status ==='success') {
+        setDeposits(response.data.data)
+        console.log('allDeposit',response.data.data)
+      }
 
-//   return (
-//     <div className="min-h-screen bg-black text-white overflow-hidden w-screen">
-//       {/* Animated background */}
-//       <div className="fixed inset-0 z-0">
-//         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=1080&width=1920')] bg-cover opacity-20"></div>
-//         <div className="absolute inset-0 bg-gradient-to-br from-blue-900/30 via-cyan-800/30 to-teal-700/30 backdrop-blur-xl"></div>
-//         <div className="absolute inset-0 bg-[url('/placeholder.svg?height=100&width=100')] bg-repeat opacity-5 animate-pulse"></div>
-//       </div>
+    }).catch((error) => {
+       console.log(error);
+       console.error("Error fetching deposits:", error);
+    }
+    ) 
+  };
+  const openModal = (crypto: CryptoType) => {
+    setSelectedCrypto(crypto);
+    setIsModalOpen(true);
+    resetForm();
+  };
 
-//       {/* Content wrapper */}
-//       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-//         <TopMenu />
-//         <div className="w-full max-w-md">
-//           <div className="text-center mb-8">
-//             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
-//             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400">
-//               Login to CoinShares Mining
-//             </h1>
-//           </div>
-//           <nav>
-//             <ul className="space-y-2">
-//               {[
-//                 { name: 'Dashboard', icon: <Wallet className="h-5 w-5" />, id: 'dashboard' },
-//                 { name: 'Deposit', icon: <ArrowDownRight className="h-5 w-5" />, id: 'deposit' },
-//                 { name: 'Withdraw', icon: <ArrowUpRight className="h-5 w-5" />, id: 'withdraw' },
-//                 { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
-//                 { name: 'Transactions', icon: <History className="h-5 w-5" />, id: 'transactions' },
-//                 { name: 'Packages', icon: <Package className="h-5 w-5" />, id: 'packages' },
-//                 { name: 'Investment History', icon: <History className="h-5 w-5" />, id: 'investment-history' },
-//                 { name: 'Earnings', icon: <DollarSign className="h-5 w-5" />, id: 'earnings' },
-//                 { name: 'Profile', icon: <User className="h-5 w-5" />, id: 'profile' },
-//               ].map((item) => (
-//                 <li key={item.id}>
-//                   <Button
-//                     variant="ghost"
-//                     className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''}`}
-//                     onClick={() => setActiveTab(item.id)}
-//                   >
-//                     {item.icon}
-//                     <span className="ml-2">{item.name}</span>
-//                   </Button>
-//                 </li>
-//               ))}
-//             </ul>
-//           </nav>
-//         </aside>
+  const closeModal = () => {
+    setSelectedCrypto(null);
+    setIsModalOpen(false);
+    resetForm();
+  };
 
-//           {/* Success Message */}
-//           {success && (
-//             <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">
-//               <div className="flex items-center">
-//                 <Check className="h-5 w-5 mr-2" />
-//                 <span>Login successful! Redirecting to dashboard...</span>
-//               </div>
-//             </div>
-//           )}
+  const resetForm = () => {
+    setNotification(null);
+    setDepositError(null);
+    setDepositAmount("");
+    setIsDepositComplete(false);
+    setDepositSuccessMessage(null);
+  };
 
-//           <form onSubmit={handleSubmit} className="space-y-6">
-//             {/* Email Field */}
-//             <div className="space-y-2">
-//               <Label htmlFor="email" className="text-gray-300">Email</Label>
-//               <Input
-//                 id="email"
-//                 type="email"
-//                 placeholder="Enter your email"
-//                 value={email}
-//                 onChange={(e) => setEmail(e.target.value)}
-//                 onFocus={() => handleFocus('email')}
-//                 className={`bg-gray-800 text-white placeholder-gray-400 ${
-//                   error.email ? 'border-red-500' : 'border-gray-700'
-//                 }`}
-//               />
-//               {error.email && <div className="text-red-300 text-sm">{error.email}</div>}
-//             </div>
+  const handleSubmit = async () => {
+    const amount = parseFloat(depositAmount);
 
-//             {/* Password Field */}
-//             <div className="space-y-2">
-//               <Label htmlFor="password" className="text-gray-300">Password</Label>
-//               <Input
-//                 id="password"
-//                 type="password"
-//                 placeholder="Enter your password"
-//                 value={password}
-//                 onChange={(e) => setPassword(e.target.value)}
-//                 onFocus={() => handleFocus('password')}
-//                 className={`bg-gray-800 text-white placeholder-gray-400 ${
-//                   error.password ? 'border-red-500' : 'border-gray-700'
-//                 }`}
-//               />
-//               {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
-//             </div>
+    if (isNaN(amount) || amount <= 0) {
+      setDepositError("Please enter a valid deposit amount.");
+      return;
+    }
 
-//             {/* Submit Button */}
-//             <Button
-//                       type="submit"
-//                    disabled={isLoading} // Disable the button when loading
-//                    className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
-// >
-//                {isLoading ? "Loading..." : "Log in"}
-//                 </Button>
-//           </form>
+    setLoading(true);
+   let data:any = {
+    method:selectedCrypto,
+    amount:depositAmount,
+    
+   }
+   await axios.post(`${ baseUrl }/transaction/deposit`,data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        },
+      }
+    ).then((response) => {
+      console.log(response.data)
+      if (response.data.status === 'success') {
+        setNewDeposit(response.data.data.id);
+      
+        // Show notification after 1 second
+        
+          setNotification({
+            message: "Deposit successfully.",
+            type: "success",
+          });
+      
+          // Hide notification after another 3 seconds
+          setTimeout(() => {
+            setNotification(null); // Clear the notification
+          }, 1000); // 3000ms = 3 seconds
+        
+      
+        setLoading(false);
+        setIsDepositComplete(true);
+      
+      } else {
+        setDepositError("Something went wrong. Please try again.");
+      }
 
-//           {/* Sign Up Link */}
-//           <div className="mt-6 text-center">
-//             <p className="text-gray-400">
-//               Don't have an account?{' '}
-//               <Button
-//                 onClick={handleLoginRedirect}
-//                 className="text-blue-400 hover:text-blue-300 transition-colors"
-//               >
-//                 Sign up
-//               </Button>
-//             </p>
-//           </div>
-//         </main>
-//       </div>
-//     </div>
-//   );
-// }
+    }).catch((error) => {
+       console.log(error);
+       console.error("Error submitting deposit:", error);
+       if (!error.response) {
+        // Handle network error or no response
+        setDepositError('Network error: Please check your internet connection.');
+      } else {
+        const errorResponse = error.response.data;
+
+        // Display API error messages if available
+        if (errorResponse.message) {
+          if (Array.isArray(errorResponse.message)) {
+            setDepositError(errorResponse.message); // For an array of messages
+          } else {
+            setDepositError(errorResponse.message); // Single error message
+          }
+        } else {
+          setDepositError('An unexpected error occurred. Please try again.');
+        }
+      }
+      //  setDepositError("Network error: Please check your internet connection.");
+    }
+    ).finally(() => {
+        setLoading(false); // Ensure loading state is turned off
+      });
+  };
+
+  const handleConfirmPayment = async (depositId: number) => {
+    setLoading(true);
+
+    await axios.get(`${ baseUrl }/transaction/notify/${newDeposit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        },
+      }
+    ).then((response) => {
+      console.log(response.data)
+      if(response.data.status ==='success') {
+        setNotification({
+            message:
+              "Thank you for confirming your payment. You will receive an email once the admin confirms your payment, and your wallet will be updated instantly.",
+            type: "success",
+          });
+  
+          getDeposits();
+          setTimeout(closeModal, 2000);
+        // setNotification(true)
+        // setLoading(false)
+       
+        // console.log('NewDeposit',response.data.data)
+        // setIsDepositComplete(true)
+
+       
+      }else {
+        setNotification({
+          message: "Payment confirmation failed. Please try again.",
+          type: "error",
+        });
+      }
+
+    }).catch((error) => {
+       console.log(error);
+       console.error("Error confirming payment:", error);
+      setNotification({
+        message: "An error occurred while confirming your payment.",
+        type: "error",
+      });
+    }
+    ).finally(() => {
+        setLoading(false); // Ensure loading state is turned off
+      });
+  };
+
+  return (
+    <div className="space-y-8 text-white">
+      <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+        Deposit Funds
+      </h2>
+
+      {/* Deposit Cards */}
+      <Card className="bg-gray-800 border-gray-700">
+        <CardHeader>
+          <CardTitle className="text-white">Choose Deposit Method</CardTitle>
+          <CardDescription className="text-gray-300">
+            Select a cryptocurrency to deposit funds into your account.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {["Bitcoin", "Ethereum"].map((crypto) => (
+              <Button
+                onClick={() => openModal(crypto as CryptoType)}
+                key={crypto}
+                variant="outline"
+                className="h-16 flex flex-col items-center justify-center text-black hover:text-black text-sm"
+              >
+                <Bitcoin className="h-6 w-6 mb-2" />
+                {crypto}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Deposit Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-full">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-64 sm:w-1/2 md:w-3/4 lg:w-1/2 xl:w-112 relative">
+            <div
+              onClick={closeModal}
+              className="absolute top-2 right-2 text-white text-xl cursor-pointer"
+            >
+              &times;
+            </div>
+
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Deposit {selectedCrypto}
+            </h3>
+
+            {depositSuccessMessage && (
+              <p className="text-green-500 mb-4">{depositSuccessMessage}</p>
+            )}
+
+            {notification && (
+              <Notification
+                message={notification.message}
+                type={notification.type}
+              />
+            )}
+
+            {!isDepositComplete ? (
+              <>
+                <p className="text-sm text-gray-400 mb-4">
+                  Enter the amount you wish to deposit
+                </p>
+                <input
+                  type="number"
+                  value={depositAmount}
+                  onChange={(e) => setDepositAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="w-full p-1 mb-2 text-black rounded-lg text-lg"
+                />
+                {depositError && (
+                  <p className="text-red-500 text-sm">{depositError}</p>
+                )}
+              </>
+            ) : (
+              <div className="flex flex-col items-center">
+                <img
+                  src="https://www.barcodesinc.com/generator/image.php?code=1234567890&style=197&type=C128B&width=200&height=100&xres=1&font=3"
+                  alt="Barcode"
+                  className="mb-4"
+                />
+                <p className="text-sm text-white mt-2">
+                  Wallet Address: wallet-address-example
+                </p>
+              </div>
+            )}
+
+            <div className="flex justify-end space-x-4">
+              <Button
+                onClick={closeModal}
+                className="bg-gray-700 hover:bg-gray-600 text-white"
+              >
+                Close
+              </Button>
+              {isDepositComplete ? (
+                <Button
+                  onClick={handleConfirmPayment}
+                  className="bg-green-600 hover:bg-green-500 text-white"
+                  disabled={loading}
+                >
+                  {loading ? "Processing..." : "Notify Admin"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  className="bg-blue-600 hover:bg-blue-500 text-white"
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Deposit"}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Deposit History Table */}
+      {/* <h2 className="text-2xl font-semibold text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+        Deposit History
+      </h2> */}
+      <div className="overflow-x-auto bg-gray-800 border-gray-700 rounded-lg shadow-lg">
+        <table className="min-w-full table-auto text-sm text-gray-200">
+          <thead className="bg-gray-700">
+            <tr>
+              <th className="px-4 py-2 text-left">SN</th>
+              <th className="px-4 py-2 text-left">Amount</th>
+              <th className="px-4 py-2 text-left">Method</th>
+              <th className="px-4 py-2 text-left">Status</th>
+              <th className="px-4 py-2 text-left">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {deposits.map((deposit, index) => (
+              <tr key={deposit.id} className="border-t border-gray-700">
+                <td className="px-4 py-2">{index+1}</td>
+                <td className="px-4 py-2">{deposit.amount}</td>
+                <td className="px-4 py-2">{deposit.method}</td>
+               
+                <td
+                  className={`px-4 py-2 ${
+                    deposit.status === 1
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }`}
+                >
+                 {deposit.status === 1?'Confirmed':'pending'}
+                </td>
+                <td className="px-4 py-2">
+                  {deposit.status === 0 && (
+                    <Button
+                    onClick={() => handleViewDeposit(deposit)}
+                      // onClick={() => handleConfirmPayment()}
+                      // onClick={() => handleConfirmPayment(deposit)}
+                      // onClick={handleConfirmPayment}
+                      className="bg-blue-600 hover:bg-blue-500 text-white"
+                    >
+                      View
+                    </Button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

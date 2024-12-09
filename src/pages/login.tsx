@@ -17,7 +17,7 @@ export default function Login() {
   const [errorMessages, setErrorMessages] = useState<string[]>([])
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-
+  const baseUrl = import.meta.env.VITE_API_URL
   // Handle signup redirect
   const handleLoginRedirect = () => {
     navigate('/signup');
@@ -68,7 +68,7 @@ export default function Login() {
       password: password,
     }
      
-    await axios.post('https://api.coinsharesmining.com/api/login', data)
+    await axios.post(`${ baseUrl }/login`, data)
     .then(function (response) {
       console.log('API Response:', response.data);  // Log the full response to inspect its structure
   
