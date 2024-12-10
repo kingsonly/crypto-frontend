@@ -13,7 +13,7 @@ import {
   Droplet,
   Navigation,
 } from "lucide-react";
-import Footer from "@/components/ui/footer";
+import Footer from "../components/footer/Footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/ui/Navbar";
 import TopMenu from "../components/menu/TopMenu";
