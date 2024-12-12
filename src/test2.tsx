@@ -14,16 +14,15 @@ interface Investment {
   monthlyProfit: number;
 }
 
-export default function PackagesTab() {
+export default function InvestmentHistoryTab() {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [investButtonLoading, setInvestButtonLoading] = useState<boolean>(false);
-  const [token, setToken] = useState<string>(""); 
+  const [token, setToken] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null);
-  const [investmentAmount, setInvestmentAmount] = useState<number | string>(""); 
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [investmentAmount, setInvestmentAmount] = useState<number | string>("");
+  const [error, setError] = useState<string | null>(null); // Error state
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -72,71 +71,81 @@ export default function PackagesTab() {
   const handleInvestNow = (inv: Investment) => {
     setSelectedInvestment(inv);
     setShowModal(true);
-    setSuccessMessage(null)
   };
 
   const handleModalClose = () => {
     setShowModal(false);
     setInvestmentAmount("");
     setError(null); // Clear error when modal is closed
-    setSuccessMessage(null); // Clear success message
   };
 
   const handleInvestSubmit = async () => {
     if (!investmentAmount || investmentAmount.toString().trim() === "") {
       setError("Please enter an amount.");
-      return;
+      return; // Exit early if the input is empty
     }
-
+    
     if (selectedInvestment && investmentAmount) {
       const amount = parseFloat(investmentAmount.toString());
 
       if (amount < selectedInvestment.minimum_amount || amount > selectedInvestment.maximum_amount) {
         setError(`Amount must be between ${selectedInvestment.minimum_amount} and ${selectedInvestment.maximum_amount}`);
-        return;
+        return; // Exit early if validation fails
       }
-
-      setInvestButtonLoading(true);
+      
+      setInvestButtonLoading(true); // Set button loading state to true when the process starts
+      
 
       const investmentData = {
-        package_id: selectedInvestment.id,
+        investmentId: selectedInvestment.id,
         amount,
+        token,
       };
 
-      try {
-        const response = await axios.post(
-          `${baseUrl}/transaction/create-investment`,
-          investmentData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        
-        if (response.data.status === "success") {
-          setSuccessMessage(response.data.message || "Investment successful!");
-          setError(null);
-          setTimeout(() => {
-            setSuccessMessage(null)
-            handleModalClose(); // Close the modal after displaying success
-          }, 2000);
-        } else {
+      await axios.post(`${ baseUrl }/transaction/create-investment`,investmentData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include Bearer token in headers
+            'Content-Type': 'application/json', // Optional, specify content type
+          },
+        }
+      ).then((response) => {
+        console.log(response.data)
+        if (response.data.status === 'success') {
           setError(response.data.message || "An error occurred.");
-        }
-      } catch (error: any) {
-        if (!error.response) {
-          setError("Network error: Please check your internet connection.");
-        } else if (error.response.data.message) {
-          setError(error.response.data.message);
+          handleModalClose();
+
+          return; 
+        
         } else {
-          setError("An error occurred while processing your investment.");
+          console.error("Error investing:", response.data.message);
+          setError(response.data.message); // Show error message from backend
         }
-      } finally {
-        setInvestButtonLoading(false);
+    
+      }).catch((error) => {
+                setError("An error occurred while processing your investment.");
+         
+         if (!error.response) {
+          setError('Network error: Please check your internet connection.');
+        } else {
+          
+          // Display API error messages if available
+          if (error.response.data.message) {
+            setError(
+              Array.isArray(error.response.data.message)
+                ? error.response.data.message.join(", ") // Combine array messages
+                : error.response.data.message
+            );
+          } else {
+            setError("An unexpected error occurred. Please try again.");
+          }
+        }
+        
       }
-    }
+      ).finally(() => {
+        setInvestButtonLoading(false); // Turn off the button's loading state
+        });
+      }
   };
 
   if (loading) {
@@ -181,6 +190,7 @@ export default function PackagesTab() {
         ))}
       </div>
 
+      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-800 p-8 rounded-lg w-[450px] relative">
@@ -194,11 +204,6 @@ export default function PackagesTab() {
             <h3 className="text-2xl font-bold text-white mb-6">
               Invest in {selectedInvestment?.name}
             </h3>
-            {successMessage && (
-              <div className="bg-green-500 text-white p-2 rounded-lg mb-4">
-                {successMessage}
-              </div>
-            )}
             <div className="space-y-6">
               <div>
                 <label className="text-white block mb-3">Enter your expected amount</label>
@@ -215,7 +220,7 @@ export default function PackagesTab() {
               {error && <div className="text-red-500 text-sm">{error}</div>}
               <div className="flex justify-between space-x-6">
                 <Button onClick={handleInvestSubmit} className="w-full" disabled={investButtonLoading}>
-                  {investButtonLoading ? "Processing..." : "Invest"}
+                {investButtonLoading ? "Processing..." : "Invest"}
                 </Button>
               </div>
             </div>
@@ -225,3 +230,43 @@ export default function PackagesTab() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+// try {
+//     const response = await axios.post(`${baseUrl}/transaction`, {
+//       headers: {
+//         Authorization: `Bearer ${getToken.token}`,
+//         "Content-Type": "application/json",
+//       },
+//       params: { type: "investment" }, // Optional, depending on the server's API
+//     });
+
+//     // Log the response data structure
+//     console.log("Response Data:", response.data);
+
+//     if (response.data.status === "success") {
+//       // Filter the response data to include only the relevant fields
+//       const filteredInvestments = response.data.data.map((inv: any) => ({
+//         id: inv.id,
+//         amount: inv.amount,
+//         created_at: inv.created_at,
+//         status: inv.status,
+//       }));
+
+//       setInvestments(filteredInvestments); // Store the filtered data
+//       console.log("Filtered investments:", filteredInvestments);
+//     } else {
+//       console.error("Error fetching investments: ", response.data.message);
+//     }
+//   } catch (error) {
+//     console.error("Error fetching investments:", error);
+//     console.log(token)
+//   } finally {
+//     setLoading(false);
+//   }

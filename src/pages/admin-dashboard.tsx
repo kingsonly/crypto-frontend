@@ -66,7 +66,7 @@ export default function AdminDashboard() {
                 { name: 'Dashboard', icon: <Wallet className="h-5 w-5" />, id: 'dashboard' },
                 { name: 'Deposit', icon: <ArrowDownRight className="h-5 w-5" />, id: 'deposit' },
                 { name: 'Withdraw', icon: <ArrowUpRight className="h-5 w-5" />, id: 'withdraw' },
-                { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
+                // { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
                 { name: 'Transactions', icon: <History className="h-5 w-5" />, id: 'transactions' },
                 { name: 'Packages', icon: <Package className="h-5 w-5" />, id: 'packages' },
                 { name: 'Investment History', icon: <History className="h-5 w-5" />, id: 'investment-history' },
