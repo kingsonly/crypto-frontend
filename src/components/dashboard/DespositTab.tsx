@@ -34,10 +34,9 @@ type CryptoType = "Bitcoin" | "Ethereum";
 
 type Deposit = {
   id: number;
-  amount: string;
-  date: string;
+  amount: number;
   currency: CryptoType;
-  status: "Pending" | "Confirmed" | "Failed";
+  status: string;
 };
 
 export default function DepositTab() {
