@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+} from "@/components/ui/card";
 import axios from "axios";
 
 // Define the type for investment data
@@ -46,28 +52,78 @@ export default function InvestmentHistoryTab() {
         setInvestments(response.data.data);
       }
     } catch (error: any) {
-      console.error("Error fetching investments:", error.response?.data || error.message);
+      console.error(
+        "Error fetching investments:",
+        error.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-8 text-white">
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-          Investment History
-        </h2>
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle>Your Investments</CardTitle>
-            <CardDescription>Track the performance of your investments.</CardDescription>
-          </CardHeader>
-          <CardContent>Loading investments...</CardContent>
-        </Card>
-      </div>
-    );
-  }
+  const render = () => {
+    if (loading) {
+      return (
+        <tr>
+          <td colspan='6'>loading...</td>
+        </tr>
+      );
+    }
+    if(investments.length < 1) {
+      return (
+        <tr>
+          <td colspan='6'>You have no investment history.</td>
+        </tr>
+      );
+    }
+    return(
+        
+      investments.map((inv) => {
+        return (
+          <tr key={inv.id} className="border-t border-gray-700">
+            <td className="py-4">{inv.investment.package}</td>{" "}
+            {/* Display Package ID or name */}
+            <td className="py-4 text-red-400">-{inv.investment.amount}</td>
+            <td className="py-4">{inv.investment.start_date}</td>{" "}
+            {/* Display the formatted start date */}
+            <td className="py-4">
+              <span
+                className={`px-2 py-1 rounded-full text-xs ${
+                  inv.investment.status == "1"
+                    ? "bg-green-900 text-green-300"
+                    : "bg-blue-900 text-blue-300"
+                }`}
+              >
+                {inv.investment.status == "1" ? "Completed" : "Pending"}
+              </span>
+            </td>
+            <td className="py-4">{inv.investment.earning_sum}</td>
+          </tr>
+        );
+      })
+    
+    )
+    
+  };
+
+  // if (loading) {
+  //   return (
+  //     <div className="space-y-8 text-white">
+  //       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+  //         Investment History
+  //       </h2>
+  //       <Card className="bg-gray-800 border-gray-700">
+  //         <CardHeader>
+  //           <CardTitle>Your Investments</CardTitle>
+  //           <CardDescription>
+  //             Track the performance of your investments.
+  //           </CardDescription>
+  //         </CardHeader>
+  //         <CardContent>Loading investments...</CardContent>
+  //       </Card>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-8 text-white">
@@ -77,7 +133,9 @@ export default function InvestmentHistoryTab() {
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
           <CardTitle>Your Investments</CardTitle>
-          <CardDescription>Track the performance of your investments.</CardDescription>
+          <CardDescription>
+            Track the performance of your investments.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <table className="w-full text-white">
@@ -91,25 +149,7 @@ export default function InvestmentHistoryTab() {
               </tr>
             </thead>
             <tbody>
-              {investments.map((inv) => {
-                return (
-                  <tr key={inv.id} className="border-t border-gray-700">
-                    <td className="py-4">{inv.investment.package}</td> {/* Display Package ID or name */}
-                    <td className="py-4 text-red-400">-{inv.investment.amount}</td>
-                    <td className="py-4">{inv.investment.start_date}</td> {/* Display the formatted start date */}
-                    <td className="py-4">
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          inv.investment.status == "1" ? "bg-green-900 text-green-300" : "bg-blue-900 text-blue-300"
-                        }`}
-                      >
-                        {inv.investment.status == "1" ? "Completed" : "Pending"}
-                      </span>
-                    </td>
-                    <td className="py-4">{inv.investment.earning_sum}</td>
-                  </tr>
-                );
-              })}
+              {render()}
             </tbody>
           </table>
         </CardContent>
