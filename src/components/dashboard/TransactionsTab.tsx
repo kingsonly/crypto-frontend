@@ -9,12 +9,6 @@ import {
 import axios from "axios";
 
 export default function TransactionsTab() {
-  // const transaction = [
-  //     { id: 1, type: 'Deposit', amount: '+0.05 BTC', date: '2023-06-01', status: 'Completed' },
-  //     { id: 2, type: 'Withdrawal', amount: '-0.03 BTC', date: '2023-05-28', status: 'Pending' },
-  //     { id: 3, type: 'Transfer', amount: '-0.01 BTC', date: '2023-05-25', status: 'Completed' },
-  //     { id: 4, type: 'Earnings', amount: '+0.002 BTC', date: '2023-05-20', status: 'Completed' },
-  //   ]
 
   const [transactions, setTransactions] = useState<Investment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
