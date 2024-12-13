@@ -52,10 +52,6 @@ export default function InvestmentHistoryTab() {
         setInvestments(response.data.data);
       }
     } catch (error: any) {
-      console.error(
-        "Error fetching investments:",
-        error.response?.data || error.message
-      );
     } finally {
       setLoading(false);
     }
@@ -106,25 +102,7 @@ export default function InvestmentHistoryTab() {
     
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="space-y-8 text-white">
-  //       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-  //         Investment History
-  //       </h2>
-  //       <Card className="bg-gray-800 border-gray-700">
-  //         <CardHeader>
-  //           <CardTitle>Your Investments</CardTitle>
-  //           <CardDescription>
-  //             Track the performance of your investments.
-  //           </CardDescription>
-  //         </CardHeader>
-  //         <CardContent>Loading investments...</CardContent>
-  //       </Card>
-  //     </div>
-  //   );
-  // }
-
+ 
   return (
     <div className="space-y-8 text-white">
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
