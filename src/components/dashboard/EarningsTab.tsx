@@ -31,14 +31,6 @@ export default function EarningsTab() {
 
       if (response.data.status === "success") {
         const earnings = response.data.data;
-
-        // Filter investments with end_date <= today
-        // const today = new Date();
-        // const filteredInvestments = investments.filter((inv: any) => {
-        //   const endDate = new Date(inv.investment.end_date);
-        //   return endDate <= today;
-        // });
-
         // Calculate total expected earnings
         const total = earnings.reduce(
           (sum: number, inv: any) => sum + (inv.earning.amount || 0),
@@ -49,6 +41,7 @@ export default function EarningsTab() {
         setEarningsBreakdown(earnings); // Set breakdown
       }
     } catch (error: any) {
+      
     } finally {
       setLoading(false);
     }
@@ -73,7 +66,6 @@ export default function EarningsTab() {
           )}
         </CardContent>
       </Card>
-
       <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
           <CardTitle>Earnings Breakdown</CardTitle>
@@ -87,8 +79,6 @@ export default function EarningsTab() {
                 <tr className="text-left text-gray-400">
                   <th className="pb-4">SN</th>
                   <th className="pb-4">Amount</th>
-                  {/* <th className="pb-4">Start Date</th> */}
-                  {/* <th className="pb-4">End Date</th> */}
                   <th className="pb-4">Date</th>
                 </tr>
               </thead>
@@ -97,8 +87,6 @@ export default function EarningsTab() {
                   <tr key={inv.id} className="border-t border-gray-700">
                     <td className="py-4">{index+1}</td>
                     <td className="py-4 text-green-400">+${inv.earning.amount}</td>
-                    {/* <td className="py-4">{inv.investment.start_date}</td> */}
-                    {/* <td className="py-4">{inv.investment.end_date}</td> */}
                     <td className="py-4 text-green-400">
                     {new Date(inv.earning.created_at).toISOString().split("T")[0]}
                     </td>
