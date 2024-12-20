@@ -73,9 +73,8 @@ export default function Login() {
       console.log('API Response:', response.data);  // Log the full response to inspect its structure
   
       if (response.data.data.status === 'success') {
-        // Save the user's info and token to localStorage
-        const { name, email, token } = response.data.data;  // Assuming the response contains this data
-        localStorage.setItem('user', JSON.stringify({ name, email, token }));
+        const { name, email, token, is_admin } = response.data.data;  // Assuming the response contains this data
+        localStorage.setItem('user', JSON.stringify({ name, email, token, is_admin }));
 
         setIsLoading(false); // Trigger success message
         navigate('/dashboard');

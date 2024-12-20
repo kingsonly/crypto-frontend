@@ -1,8 +1,17 @@
+// import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign, Users, ArrowUpRight } from "lucide-react";
 
 
 export default function DashboardTab() {
+
+  // useEffect(() => {
+  //     const getToken = JSON.parse(localStorage.getItem("user") || "{}");
+  //     console.log(getToken);
+      
+  //   // const token = getToken.token;
+  // }, []);
+
     return (
       <div className="space-y-8">
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">Dashboard</h2>

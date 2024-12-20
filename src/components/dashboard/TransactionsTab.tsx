@@ -9,10 +9,11 @@ import {
 import axios from "axios";
 
 export default function TransactionsTab() {
-
   const [transactions, setTransactions] = useState<Investment[]>([]);
+  const [filteredTransactions, setFilteredTransactions] = useState<Investment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<string>("");
+  const [filter, setFilter] = useState<string>("all");
   const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -21,10 +22,10 @@ export default function TransactionsTab() {
     fetchTransactions(getToken.token);
   }, []);
 
-  const convertToDateFormat = (isoString) => {
+  const convertToDateFormat = (isoString: string) => {
     const date = new Date(isoString);
     const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
 
     return `${day}/${month}/${year}`;
@@ -45,6 +46,7 @@ export default function TransactionsTab() {
 
       if (response.data.status === "success") {
         setTransactions(response.data.data);
+        setFilteredTransactions(response.data.data); // Initialize filtered transactions
       }
     } catch (error: any) {
       console.error(
@@ -55,6 +57,17 @@ export default function TransactionsTab() {
       setLoading(false);
     }
   };
+
+  // Filter transactions based on the selected filter
+  useEffect(() => {
+    if (filter === "all") {
+      setFilteredTransactions(transactions);
+    } else {
+      const filtered = transactions.filter((tx) => tx.type === filter);
+      setFilteredTransactions(filtered);
+    }
+  }, [filter, transactions]);
+
   if (loading) {
     return (
       <div className="space-y-8 text-white">
@@ -63,7 +76,7 @@ export default function TransactionsTab() {
         </h2>
         <Card className="bg-gray-800 border-gray-700">
           <CardHeader>
-            <CardTitle>Your Transactionss</CardTitle>
+            <CardTitle>Your Transactions</CardTitle>
             <CardDescription>
               Track the performance of your Transactions.
             </CardDescription>
@@ -73,12 +86,29 @@ export default function TransactionsTab() {
       </div>
     );
   }
-  console.log(transactions);
+
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
         Transactions
       </h2>
+
+      {/* Filter Dropdown */}
+      <div className="flex justify-end mb-4">
+        <select
+          className="p-2 rounded bg-gray-700 text-white"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="withdraw">Withdrawal</option>
+          <option value="deposit">Deposit</option>
+          <option value="earning">Earnings</option>
+          <option value="investment">Investments</option>
+          {/* <option value="referrals">Referrals</option> */}
+        </select>
+      </div>
+
       <Card className="bg-gray-800 border-gray-700">
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
@@ -95,7 +125,7 @@ export default function TransactionsTab() {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((tx) => (
+              {filteredTransactions.map((tx) => (
                 <tr key={tx.id} className="border-t border-gray-700">
                   <td className="py-4">{tx.type}</td>
                   <td
