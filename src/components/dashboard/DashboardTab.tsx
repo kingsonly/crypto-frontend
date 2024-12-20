@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-// import { useState, useEffect } from "react";
-=======
 import { useState, useEffect } from "react";
->>>>>>> origin/dev
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { DollarSign, Users, ArrowUpRight } from "lucide-react";
 import axios from "axios";
@@ -10,15 +6,6 @@ import axios from "axios";
 
 export default function DashboardTab() {
 
-<<<<<<< HEAD
-  // useEffect(() => {
-  //     const getToken = JSON.parse(localStorage.getItem("user") || "{}");
-  //     console.log(getToken);
-      
-  //   // const token = getToken.token;
-  // }, []);
-
-=======
   const [totalEarnings, setTotalEarnings] = useState<number>(0);
   const [earningsBreakdown, setEarningsBreakdown] = useState<any[]>([]);
   const [walletBalance, setWalletBalance] = useState<number>(0);
@@ -123,8 +110,7 @@ const fetchWalletBalance = async (token: string) => {
       setLoading(false);
     }
   };
->>>>>>> origin/dev
-    return (
+  return (
       <div className="space-y-8">
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">Dashboard</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -207,5 +193,5 @@ const fetchWalletBalance = async (token: string) => {
           </Card>
         </div>
       </div>
-    )
+  )
   }
