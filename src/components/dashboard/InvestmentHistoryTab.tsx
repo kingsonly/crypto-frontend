@@ -8,20 +8,6 @@ import {
 } from "@/components/ui/card";
 import axios from "axios";
 
-// Define the type for investment data
-// interface Investment {
-//   id: number;
-//   package: string;
-//   amount: number;
-//   start_date: string; // Added start_date to the Investment interface
-//   expected_earning: number;
-//   end_date: string;
-//   transaction_id: number;
-//   status: string;
-//   created_at: string;
-//   updated_at: string;
-//   earning_sum: number;
-// }
 
 export default function InvestmentHistoryTab() {
   const [investments, setInvestments] = useState<Investment[]>([]);
@@ -79,7 +65,7 @@ export default function InvestmentHistoryTab() {
           <tr key={inv.id} className="border-t border-gray-700">
             <td className="py-4">{inv.investment.package}</td>{" "}
             {/* Display Package ID or name */}
-            <td className="py-4 text-red-400">-{inv.investment.amount}</td>
+            <td className="py-4">{inv.investment.amount}</td>
             <td className="py-4">{inv.investment.start_date}</td>{" "}
             {/* Display the formatted start date */}
             <td className="py-4">
@@ -90,7 +76,7 @@ export default function InvestmentHistoryTab() {
                     : "bg-blue-900 text-blue-300"
                 }`}
               >
-                {inv.investment.status == "1" ? "Completed" : "Pending"}
+                {inv.investment.status == "1" ? "Completed" : "in progress"}
               </span>
             </td>
             <td className="py-4">{inv.investment.earning_sum}</td>

@@ -8,11 +8,11 @@ import { Label } from "@/components/ui/label"
 import { Bitcoin, AlertCircle, Check } from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
 import axios from 'axios'
-import Navbar from '@/components/ui/Navbar';
+// import Navbar from '@/components/ui/Navbar';
 
 
 export default function Signup() {
-  const [userName, setUserName] = useState('')
+  const [username, setUserName] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -51,8 +51,8 @@ export default function Signup() {
     let newError: { [key: string]: string } = {}
 
     // UserName validation
-    if (!userName.trim()) {
-      newError.userName = 'UserName is required'
+    if (!username.trim()) {
+      newError.username = 'UserName is required'
     }
 
     // Name validation
@@ -93,9 +93,9 @@ export default function Signup() {
 
     let data: any = {
       name: name,
+      username: username,
       email: email,
       password: password,
-      username: userName,
     }
 
 
@@ -104,6 +104,7 @@ export default function Signup() {
         console.log('API Response:', response.data);  // Log the full response to inspect its structure
 
         if (response.data.status === 'success') {
+       
           setSuccess(true);
           setErrorMessages([]);  // Clear errors if successful
         } else {
@@ -233,19 +234,19 @@ export default function Signup() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-gray-300">UserName</Label>
+                <Label htmlFor="username" className="text-gray-300">UserName</Label>
                 <Input
-                  id="userName"
+                  id="username"
                   type="text"
                   placeholder="Enter UserName"
-                  value={userName}
+                  value={username}
                   onChange={(e) => setUserName(e.target.value)}
-                  onFocus={() => handleFocus('userName')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.userName ? 'border-red-500' : 'border-gray-700'
+                  onFocus={() => handleFocus('username')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.username ? 'border-red-500' : 'border-gray-700'
                     }`}
                 />
-                {error.userName && (
-                  <div className="text-red-300 text-sm">{error.userName}</div>
+                {error.username && (
+                  <div className="text-red-300 text-sm">{error.username}</div>
                 )}
               </div>
 
