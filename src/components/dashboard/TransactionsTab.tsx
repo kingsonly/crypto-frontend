@@ -109,7 +109,7 @@ export default function TransactionsTab() {
         </select>
       </div>
 
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
           <CardDescription>Your latest account activities.</CardDescription>
@@ -118,6 +118,7 @@ export default function TransactionsTab() {
           <table className="w-full text-white">
             <thead>
               <tr className="text-left text-gray-400">
+                <th className="pb-4">User</th>
                 <th className="pb-4">Type</th>
                 <th className="pb-4">Amount</th>
                 <th className="pb-4">Date</th>
@@ -127,6 +128,7 @@ export default function TransactionsTab() {
             <tbody>
               {filteredTransactions.map((tx) => (
                 <tr key={tx.id} className="border-t border-gray-700">
+                  <td className="py-4">{tx.user && tx.user.name}</td>
                   <td className="py-4">{tx.type}</td>
                   <td
                     className={`py-4 ${

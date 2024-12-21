@@ -44,6 +44,7 @@ export default function DepositTab() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [loading, setLoading] = useState(false);
+  const [indexLoading, setIndexLoading] = useState<number | null>(null);
   const [token, setToken] = useState(false);
   const [newDeposit, setNewDeposit] = useState();
   const [allDeposit, setAllDeposit] = useState([]);
@@ -92,7 +93,7 @@ const handleViewDeposit = (deposit:any) => {
       // console.log(response.data)
       if(response.data.status ==='success') {
         setDeposits(response.data.data)
-        // console.log('allDeposit',response.data.data)
+        console.log('allDeposit',response.data.data)
       }
       console.log("allDeposit:", response.data);
     }).catch((error) => {
@@ -243,7 +244,7 @@ const handleViewDeposit = (deposit:any) => {
   };
 
   const approveDeposit = async (depositId: number) => {
-    setLoading(true);
+    setIndexLoading(depositId);
 
     await axios.get(`${ baseUrl }/transaction/confirm-deposit/${depositId}`,
       {
@@ -261,7 +262,7 @@ const handleViewDeposit = (deposit:any) => {
             type: "success",
           });
   
-          setLoading(false);
+          setIndexLoading(null);
           getDeposits();
       }else {
         setNotification({
@@ -279,7 +280,7 @@ const handleViewDeposit = (deposit:any) => {
       });
     }
     ).finally(() => {
-        setLoading(false); // Ensure loading state is turned off
+        setIndexLoading(null); // Ensure loading state is turned off
       });
   };
 
@@ -414,7 +415,6 @@ const handleViewDeposit = (deposit:any) => {
             <thead className="bg-gray-700">
               <tr>
                 <th className="px-4 py-2 text-left">SN</th>
-                <th className="px-4 py-2 text-left">User</th>
                 <th className="px-4 py-2 text-left">Amount</th>
                 <th className="px-4 py-2 text-left">Method</th>
                 <th className="px-4 py-2 text-left">Status</th>
@@ -475,6 +475,7 @@ const handleViewDeposit = (deposit:any) => {
               <thead className="bg-gray-700">
                 <tr>
                   <th className="px-4 py-2 text-left">SN</th>
+                  <th className="px-4 py-2 text-left">User</th>
                   <th className="px-4 py-2 text-left">Amount</th>
                   <th className="px-4 py-2 text-left">Method</th>
                   <th className="px-4 py-2 text-left">Status</th>
@@ -485,6 +486,7 @@ const handleViewDeposit = (deposit:any) => {
                 {deposits.map((deposit, index) => (
                   <tr key={deposit.id} className="border-t border-gray-700">
                     <td className="px-4 py-2">{index+1}</td>
+                    <td className="px-4 py-2">{deposit.user && deposit.user.name}</td>
                     <td className="px-4 py-2">{deposit.amount}</td>
                     <td className="px-4 py-2">{deposit.method}</td>
                   
@@ -510,7 +512,7 @@ const handleViewDeposit = (deposit:any) => {
                           // onClick={handleConfirmPayment}
                           className="bg-blue-600 hover:bg-blue-500 text-white"
                         >
-                         {loading ? "Processing..." : "Approve"}
+                         {indexLoading == deposit.id ? "Processing..." : "Approve"}
                         </Button>
                       )}
                       {deposit.status === 1 && (

@@ -78,6 +78,7 @@ export default function EarningsTab() {
               <thead>
                 <tr className="text-left text-gray-400">
                   <th className="pb-4">SN</th>
+                  <th className="pb-4">User</th>
                   <th className="pb-4">Amount</th>
                   <th className="pb-4">Date</th>
                 </tr>
@@ -86,6 +87,7 @@ export default function EarningsTab() {
                 {earningsBreakdown.map((inv: any, index) => (
                   <tr key={inv.id} className="border-t border-gray-700">
                     <td className="py-4">{index+1}</td>
+                    <td className="py-4">{inv.user && inv.user.name}</td>
                     <td className="py-4 text-green-400">+${inv.earning.amount}</td>
                     <td className="py-4 text-green-400">
                     {new Date(inv.earning.created_at).toISOString().split("T")[0]}

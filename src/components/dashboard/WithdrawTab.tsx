@@ -34,6 +34,7 @@ export default function WithdrawTab() {
   const [history,setHistory] = useState<any>([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
+  const [indexLoading, setIndexLoading] = useState<number | null>(null);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -81,7 +82,7 @@ export default function WithdrawTab() {
   } 
 
   const approveWithdrawal = async (withdrawId: number) => {
-    setLoading(true);
+    setIndexLoading(withdrawId);
 
     await axios.get(`${ baseUrl }/transaction/approve-withdrawal/${withdrawId}`,
       {
@@ -99,7 +100,7 @@ export default function WithdrawTab() {
             type: "success",
           });
   
-          setLoading(false);
+          setIndexLoading(null);
           getWithdrawal();
       }else {
         setNotification({
@@ -117,7 +118,7 @@ export default function WithdrawTab() {
       });
     }
     ).finally(() => {
-        setLoading(false); // Ensure loading state is turned off
+        setIndexLoading(null); // Ensure loading state is turned off
       });
   };
   
@@ -251,6 +252,7 @@ export default function WithdrawTab() {
                     <thead>
                       <tr className="text-left text-gray-400">
                         <th className="pb-4">SN</th>
+                        <th className="pb-4">User</th>
                         <th className="pb-4">Amount</th>
                         <th className="pb-4">Date</th>
                         <th className="pb-4">Wallet Address</th>
@@ -263,12 +265,13 @@ export default function WithdrawTab() {
                     </thead>
                     <tbody>
                       {history.map((tx,i) => <tr key={tx.id} className="border-t border-gray-700">
-                        <td className="py-4">{i+1}</td>
+                        <td className="py-4 text-white">{i+1}</td>
+                        <td className="py-4 text-white">{tx.user && tx.user.name}</td>
                         <td className={`py-4 ${tx.status == 1? 'text-green-400' : 'text-red-400'}`}>{tx.amount && tx.amount}</td>
-                        <td className="py-4">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
-                        <td className="py-4">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
-                        <td className="py-4">{tx.method != null ? tx.method : "NULL"}</td>
-                        <td className="py-4">
+                        <td className="py-4 text-white">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
+                        <td className="py-4 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
+                        <td className="py-4 text-white">{tx.method != null ? tx.method : "NULL"}</td>
+                        <td className="py-4 text-white">
                           <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
                             }`}>
                               {tx.status === 1 ? 'completed' : 'pending'}
@@ -289,7 +292,7 @@ export default function WithdrawTab() {
                                 // onClick={handleConfirmPayment}
                                 className="bg-blue-600 hover:bg-blue-500 text-white"
                               >
-                                {loading ? "Processing..." : "Approve"}
+                                {indexLoading == tx.id ? "Processing..." : "Approve"}
                               </Button>
                             )}
                             {tx.status === 1 && (

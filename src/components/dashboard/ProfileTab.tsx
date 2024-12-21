@@ -13,6 +13,7 @@ export default function ProfileTab() {
   // Change password form states
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [users, setUsers] = useState<any>([]);
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const baseUrl = import.meta.env.VITE_API_URL;
@@ -43,6 +44,8 @@ export default function ProfileTab() {
       setToken(getToken.token)
       setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
     }
+
+    getUsers();
   }, []);
 
   // Handle password change
@@ -90,6 +93,39 @@ export default function ProfileTab() {
       setIsSubmitting(false);
     }
   };
+
+  const getUsers = async () => {
+    let getToken:any = JSON.parse(localStorage.getItem('user'))
+    await axios.post(`${ baseUrl }/user`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${getToken.token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        },
+      }
+    ).then((response) => {
+      // console.log(response.data)
+      if(response.data.status ==='success') {
+        setUsers(response.data.data)
+        console.log('allUsers',response.data.data)
+      }
+      console.log("allDeposit:", response.data);
+    }).catch((error) => {
+       console.log(error);
+       console.error("Error fetching deposits:", error);
+    }
+    ) 
+  };
+
+  const convertToDateFormat = (isoString) => {
+    const date = new Date(isoString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+    const year = date.getFullYear();
+  
+    return `${day}/${month}/${year}`;
+  }
 
   return (
     <div className="space-y-8">
@@ -206,6 +242,54 @@ export default function ProfileTab() {
             </div>
           </div>
         )}
+      </div>
+    )}
+
+    {isAdmin && (
+      <div className="space-y-8">
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+          All Users
+        </h2>
+        <Card className="bg-gray-800 border-gray-700">
+          <CardHeader>
+            <CardTitle style={{color: 'white'}}>All Users</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <table className="w-full">
+              <thead>
+                <tr className="text-left text-gray-400">
+                  <th className="pb-4">SN</th>
+                  <th className="pb-4">Name</th>
+                  <th className="pb-4">Username</th>
+                  <th className="pb-4">Email</th>
+                  <th className="pb-4">Phone</th>
+                  <th className="pb-4">Role</th>
+                  {/* <th className="pb-4">Date</th> */}
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user,i) => <tr key={user.id} className="border-t border-gray-700">
+                  <td className="py-4 text-white">{i+1}</td>
+                  <td className="py-4 text-white">{user.name != null ? user.name : "NULL"}</td>
+                  <td className="py-4 text-white">{user.username != null ? user.username : "NULL"}</td>
+                  <td className="py-4 text-white">{user.email != null ? user.email : "NULL"}</td>
+                  <td className="py-4 text-white">{user.phone != null ? user.phone : "NULL"}</td>
+                  <td className="py-4 text-white">
+                    <span className={`px-2 py-1 rounded-full text-xs ${user.is_admin === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                      }`}>
+                        {user.is_admin === 1 ? 'Admin' : 'User'}
+                      
+                    </span>
+                  </td>
+                  {/* <td className="py-4 text-white">{user != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td> */}
+                </tr>
+                )}
+              </tbody>
+            
+              </table>
+              
+            </CardContent>
+        </Card>
       </div>
     )}
     </div>
