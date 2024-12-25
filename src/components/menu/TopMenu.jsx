@@ -62,6 +62,7 @@ export default function TopMenu() {
                 CoinShares Mining
               </span>
             </div>
+            <div className="block md:hidden ">abscf</div>
             <div className="hidden md:block ">
               <div className="ml-10 flex items-baseline space-x-4">
                 <a
