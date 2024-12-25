@@ -110,7 +110,7 @@ const fetchWalletBalance = async (token: string) => {
       setLoading(false);
     }
   };
-    return (
+  return (
       <div className="space-y-8">
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">Dashboard</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -193,5 +193,5 @@ const fetchWalletBalance = async (token: string) => {
           </Card>
         </div>
       </div>
-    )
+  )
   }
