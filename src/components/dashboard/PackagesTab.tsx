@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+// import { exit } from "process";
 
 // Define the type for investment data
 interface Investment {
@@ -14,9 +17,30 @@ interface Investment {
   monthlyProfit: number;
 }
 
+function Notification({
+  message,
+  type,
+}: {
+  message: string;
+  type: "success" | "error";
+}) {
+  return (
+    <div
+      className={`p-3 rounded-lg mb-4 text-sm ${
+        type === "success"
+          ? "bg-green-600 text-white"
+          : "bg-red-600 text-white"
+      }`}
+    >
+      {message}
+    </div>
+  );
+}
+
 export default function PackagesTab() {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [newLoading, setNewLoading] = useState<boolean>(false);
   const [investButtonLoading, setInvestButtonLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>(""); 
   const [showModal, setShowModal] = useState<boolean>(false);
@@ -24,8 +48,31 @@ export default function PackagesTab() {
   const [investmentAmount, setInvestmentAmount] = useState<number | string>(""); 
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [indexLoading, setIndexLoading] = useState<number | null>(null);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [fullNotification, setFullNotification] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
+  const [name, setName] = useState<string>("");
+  const [minimumAmount, setMinimumAmount] = useState<number>(null);
+  const [maximumAmount, setMaximumAmount] = useState<number>(null);
+  const [interestRate, setInterestRate] = useState<number>(null);
+  const [duration, setDuration] = useState<number>(null);
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
+
+  const stateSetters = {
+    name: setName,
+    minimumAmount: setMinimumAmount,
+    maximumAmount: setMaximumAmount,
+    interestRate: setInterestRate,
+    duration: setDuration,
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -33,6 +80,8 @@ export default function PackagesTab() {
       const getToken = JSON.parse(storedUser);
       setToken(getToken.token);
       fetchInvestments(getToken.token);
+      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+      
     } else {
       navigate("/login");
     }
@@ -49,6 +98,7 @@ export default function PackagesTab() {
       });
 
       if (response.data.status === "success") {
+        console.log("All Packages", response.data);
         const filteredInvestments = response.data.data.map((inv: any) => ({
           id: inv.id,
           name: inv.name,
@@ -68,6 +118,108 @@ export default function PackagesTab() {
       setLoading(false);
     }
   };
+
+  const createPackage = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setNewLoading(true)
+
+    if (name == "") {
+      setNotification({
+        message:
+          "Name field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (minimumAmount == null || !minimumAmount) {
+      setNotification({
+        message:
+          "The Minimum Amount field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (maximumAmount == null || !maximumAmount) {
+      setNotification({
+        message:
+          "The Maximum Amount field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (interestRate == null || !interestRate) {
+      setNotification({
+        message:
+          "The Interest Rate field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (duration == null || !duration) {
+      setNotification({
+        message:
+          "The Duration field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    let data:any = {
+      name: name,
+      minimum_amount: minimumAmount,
+      maximum_amount: maximumAmount,
+      interest_rate: interestRate,
+      duration: duration,
+    }
+    
+    setNotification(null);
+    await axios.post(
+      `${ baseUrl }/package/create`, 
+      data,
+     { headers: {
+        Authorization: `Bearer ${token}`, // Include Bearer token in headers
+        'Content-Type': 'application/json', // Optional, specify content type
+      }},
+      )
+    .then(function (response:any) {
+      if(response.data.status === "success")
+      alert("Package Created Successfully")
+      setFullNotification({
+        message: "Package Created Successfully",
+        type: "success",
+      })
+      fetchInvestments(token);
+      setNewLoading(false)
+    })
+    .catch((error:any) => {
+      alert("somthing went wrong ")
+      console.error("Error creating withdrwal request:", error);
+      setFullNotification({
+        message: "Something went wrong, couldn't create package",
+        type: "success",
+      })
+      setNewLoading(false)
+    })
+    .finally(() => {
+      setFullNotification(null);
+      setName("")
+      setMaximumAmount(null)
+      setMinimumAmount(null)
+      setInterestRate(null)
+      setDuration(null)
+      setNewLoading(false)
+    })
+  }
 
   const handleInvestNow = (inv: Investment) => {
     setSelectedInvestment(inv);
@@ -139,26 +291,156 @@ export default function PackagesTab() {
     }
   };
 
+  const handleInput = (e, stateSetters) => {
+    const { name, value } = e.target;
+  
+    if (stateSetters[name]) {
+      stateSetters[name](value); // Call the appropriate state setter with the new value
+    } else {
+      console.warn(`No setter found for input field: ${name}`);
+    }
+  };
+
   if (loading) {
-    return (
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 text-white">
-          Investment History
-        </h2>
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white">Your Investments</CardTitle>
-          </CardHeader>
-          <CardContent className="text-white">Loading investments...</CardContent>
-        </Card>
-      </div>
-    );
+    if (isAdmin == 1) {
+      return (
+        <div className="space-y-8">
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">Your Investments</CardTitle>
+            </CardHeader>
+            <CardContent className="text-white">Loading investment packages...</CardContent>
+          </Card>
+        </div>
+      )
+    } else {
+      return (
+        <div className="space-y-8">
+          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 text-white">
+            Investment History
+          </h2>
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">Your Investments</CardTitle>
+            </CardHeader>
+            <CardContent className="text-white">Loading investments...</CardContent>
+          </Card>
+        </div>
+      );
+    }
   }
 
   return (
+
+   
     <div className="space-y-8 text-white">
+
+    {fullNotification && (
+      <Notification
+        message={fullNotification.message}
+        type={fullNotification.type}
+      />
+    )}
+
+    {isAdmin && (
+      <div>
+        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 mb-4">
+          Create A New Investment Package
+        </h2>
+        <Card className="bg-gray-800 border-gray-700 text-color-white">
+          <CardHeader>
+            <CardTitle>Create A New Package</CardTitle>
+            <CardDescription>
+              Enter Pakage details
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+          {notification && (
+            <Notification
+              message={notification.message}
+              type={notification.type}
+            />
+          )}
+            <form className="space-y-4" onSubmit={createPackage}>
+              {/* Name Input */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter Package Name"
+                  name="name"
+            value={name}
+            onChange={(e) => handleInput(e, stateSetters)}
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Minimum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="minimumAmount">Minimum Amount</Label>
+                <Input
+                  id="minimumAmount"
+                  type="number"
+                  name="minimumAmount"
+            value={minimumAmount}
+            onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Minimum Amount"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Maximum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="maximumAmount">Maximum Amount</Label>
+                <Input
+                  id="maximumAmount"
+                  type="number"
+                  name="maximumAmount"
+            value={maximumAmount}
+            onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Maximum Amount"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div> 
+
+              {/* Interest Rate Input */}
+              <div className="space-y-2">
+                <Label htmlFor="interestRate">Interest Rate</Label>
+                <Input
+                  id="interestRate"
+                  type="number"
+                  name="interestRate"
+            value={interestRate}
+            onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Interest Rate"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div> 
+
+              {/* Maximum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  name="duration"
+            value={duration}
+            onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter duration"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div> 
+              
+              <Button  type="submit" className="w-full">{newLoading ? "Processing..." : "Create Package"}</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    )}
+
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-        Investment History
+        Investment Packages
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {investments.map((inv) => (
@@ -173,9 +455,11 @@ export default function PackagesTab() {
                 <li>Duration: {inv.duration}</li>
                 <li>Monthly Profit: {inv.monthlyProfit}</li>
               </ul>
-              <Button className="w-full mt-4" onClick={() => handleInvestNow(inv)}>
-                Invest Now
-              </Button>
+              {!isAdmin && (
+                <Button className="w-full mt-4" onClick={() => handleInvestNow(inv)}>
+                  Invest Now
+                </Button>
+              )}
             </CardContent>
           </Card>
         ))}

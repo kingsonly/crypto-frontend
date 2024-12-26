@@ -63,6 +63,7 @@ export default function InvestmentHistoryTab() {
       investments.map((inv) => {
         return (
           <tr key={inv.id} className="border-t border-gray-700">
+            <td className="py-4">{inv.user && inv.user.name}</td>{" "}
             <td className="py-4">{inv.investment.package}</td>{" "}
             {/* Display Package ID or name */}
             <td className="py-4">{inv.investment.amount}</td>
@@ -105,6 +106,7 @@ export default function InvestmentHistoryTab() {
           <table className="w-full text-white">
             <thead>
               <tr className="text-left text-gray-400">
+                <th className="pb-4">User</th>
                 <th className="pb-4">Package</th>
                 <th className="pb-4">Amount</th>
                 <th className="pb-4">Date</th> {/* Display Start Date */}
