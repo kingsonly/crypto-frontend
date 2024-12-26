@@ -41,7 +41,7 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $2,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $19,999</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
                 <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
@@ -56,7 +56,7 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $20,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $99,999</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
                 <Button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
@@ -71,7 +71,7 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $100,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $500,000</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
                 <Button className="w-full bg-teal-500 hover:bg-teal-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
