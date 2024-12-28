@@ -450,10 +450,10 @@ export default function PackagesTab() {
             </CardHeader>
             <CardContent className="text-white">
               <ul className="space-y-2">
-                <li>Minimum Amount: {inv.minimum_amount}</li>
-                <li>Maximum Amount: {inv.maximum_amount}</li>
+                <li>Minimum Amount: ${inv.minimum_amount}</li>
+                <li>Maximum Amount: ${inv.maximum_amount}</li>
                 <li>Duration: {inv.duration}</li>
-                <li>Monthly Profit: {inv.monthlyProfit}</li>
+                <li>Monthly Profit: ${inv.monthlyProfit}</li>
               </ul>
               {!isAdmin && (
                 <Button className="w-full mt-4" onClick={() => handleInvestNow(inv)}>
@@ -493,7 +493,7 @@ export default function PackagesTab() {
                   onChange={(e) => setInvestmentAmount(e.target.value)}
                   min={selectedInvestment?.minimum_amount}
                   max={selectedInvestment?.maximum_amount}
-                  placeholder={`Min: ${selectedInvestment?.minimum_amount} Max: ${selectedInvestment?.maximum_amount}`}
+                  placeholder={`Min: $${selectedInvestment?.minimum_amount} Max: $${selectedInvestment?.maximum_amount}`}
                 />
               </div>
               {error && <div className="text-red-500 text-sm">{error}</div>}
