@@ -1,6 +1,6 @@
 import { useState,useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Bitcoin } from "lucide-react";
+import { Bitcoin, Ethereum } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -30,7 +30,7 @@ function Notification({
   );
 }
 
-type CryptoType = "Bitcoin" | "Ethereum";
+type CryptoType = "Bitcoin" | "Ethereum" | "USDT";
 
 type Deposit = {
   id: number;
@@ -92,12 +92,9 @@ const handleViewDeposit = (deposit:any) => {
       // console.log(response.data)
       if(response.data.status ==='success') {
         setDeposits(response.data.data)
-        console.log('allDeposit',response.data.data)
       }
       console.log("allDeposit:", response.data);
     }).catch((error) => {
-       console.log(error);
-       console.error("Error fetching deposits:", error);
     }
     ) 
   };
@@ -168,8 +165,6 @@ const handleViewDeposit = (deposit:any) => {
       }
 
     }).catch((error) => {
-       console.log(error);
-       console.error("Error submitting deposit:", error);
        if (!error.response) {
         // Handle network error or no response
         setDepositError('Network error: Please check your internet connection.');
@@ -230,8 +225,6 @@ const handleViewDeposit = (deposit:any) => {
       }
 
     }).catch((error) => {
-       console.log(error);
-       console.error("Error confirming payment:", error);
       setNotification({
         message: "An error occurred while confirming your payment.",
         type: "error",
@@ -253,7 +246,6 @@ const handleViewDeposit = (deposit:any) => {
         },
       }
     ).then((response) => {
-      console.log(response.data)
       if(response.data.status ==='success') {
         setNotification({
             message:
@@ -271,8 +263,6 @@ const handleViewDeposit = (deposit:any) => {
       }
 
     }).catch((error) => {
-       console.log(error);
-       console.error("Error approving deposit:", error);
       setNotification({
         message: "An error occurred while trying to approve your deposit.",
         type: "error",
@@ -301,8 +291,8 @@ const handleViewDeposit = (deposit:any) => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {["Bitcoin", "Ethereum"].map((crypto) => (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {["Bitcoin", "Ethereum", "USDT"].map((crypto) => (
                   <Button
                     onClick={() => openModal(crypto as CryptoType)}
                     key={crypto}
