@@ -77,7 +77,7 @@ export default function Login() {
   
       if (response.data.data.status === 'success') {
         const { name, email, token, is_admin } = response.data.data;  // Assuming the response contains this data
-        localStorage.setItem('user', JSON.stringify({ name, email, token, is_admin }));
+        localStorage.setItem('user', JSON.stringify({ name,  email, token, is_admin }));
 
         setIsLoading(false); // Trigger success message
         navigate('/dashboard');

@@ -3,12 +3,15 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Logout from "@/pages/Logout";
 
 export default function ProfileTab() {
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   // Change password form states
   const [currentPassword, setCurrentPassword] = useState("");
@@ -19,6 +22,7 @@ export default function ProfileTab() {
   const baseUrl = import.meta.env.VITE_API_URL;
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [token, setToken] = useState<string>("");
+  const navigate = useNavigate();
   // State to hold user data
   const [userData, setUserData] = useState({
     name: "",
@@ -47,6 +51,11 @@ export default function ProfileTab() {
 
     getUsers();
   }, []);
+
+  const nextCategory = () => {
+    localStorage.removeItem("user"); // Clear user data
+  navigate("/login"); // Redirect to the login page (or your desired route)
+  };
 
   // Handle password change
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -188,6 +197,37 @@ export default function ProfileTab() {
                   Update
                 </Button>
               </div>
+              <div>
+           <Button
+             onClick={() => setShowModal(true)}
+            >
+               Logout
+          </Button>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white w-96 p-6 rounded-lg shadow-lg text-center">
+            <p className="text-lg font-medium text-gray-800">
+              Are you sure you want to logout?
+            </p>
+            <div className="mt-6 flex justify-around">
+              <button
+                className="px-6 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600"
+                onClick={nextCategory}
+              >
+                Yes
+              </button>
+              <button
+                className="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg shadow hover:bg-gray-400"
+                onClick={() => setShowModal(false)}
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
             </CardContent>
           </Card>
         </div>
