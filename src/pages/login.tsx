@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,7 @@ export default function Login() {
   const handleLoginRedirect = () => {
     navigate('/signup');
   };
+ 
 
   // Validate email and password
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -37,6 +38,8 @@ export default function Login() {
   };
   
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,6 +67,7 @@ export default function Login() {
       setIsLoading(false);
       return;
     }
+ 
 
     // Successful login
     let data: any = {
@@ -76,8 +80,8 @@ export default function Login() {
       console.log('API Response:', response.data);  // Log the full response to inspect its structure
   
       if (response.data.data.status === 'success') {
-        const { name, email, token, is_admin } = response.data.data;  // Assuming the response contains this data
-        localStorage.setItem('user', JSON.stringify({ name,  email, token, is_admin }));
+        // const { name, email, token, is_admin} = response.data.data;  // Assuming the response contains this data
+        localStorage.setItem('user', JSON.stringify(response.data.data));
 
         setIsLoading(false); // Trigger success message
         navigate('/dashboard');

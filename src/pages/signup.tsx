@@ -99,18 +99,26 @@ export default function Signup() {
       setIsLoading(false); // Stop loading if there are errors
       return
     }
-
+     
     // Here you would typically handle the signup logic
     // setSuccess(true)
+    let ref = localStorage.getItem('ref')
+
+   
+      
 
     let data: any = {
       name: name,
       username: username,
       email: email,
       password: password,
+     
+     
     }
 
-
+    if(ref != null) {
+      data["ref"] = ref
+ }
     await axios.post(`${ baseUrl }/signup`, data)
       .then(function (response) {
         console.log('API Response:', response.data);  // Log the full response to inspect its structure
