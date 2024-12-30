@@ -1,4 +1,4 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bitcoin, Ethereum } from "lucide-react";
 import {
@@ -20,9 +20,7 @@ function Notification({
   return (
     <div
       className={`p-3 rounded-lg mb-4 text-sm ${
-        type === "success"
-          ? "bg-green-600 text-white"
-          : "bg-red-600 text-white"
+        type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
       }`}
     >
       {message}
@@ -50,53 +48,55 @@ export default function DepositTab() {
   const [allDeposit, setAllDeposit] = useState([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
-
-  
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
   } | null>(null);
   const [depositError, setDepositError] = useState<string | null>(null);
-  const baseUrl = import.meta.env.VITE_API_URL
+  const baseUrl = import.meta.env.VITE_API_URL;
   const [isDepositComplete, setIsDepositComplete] = useState(false);
-  const [depositSuccessMessage, setDepositSuccessMessage] = useState<string | null>(null);
-  const [deposits, setDeposits] = useState([
-   
-  ]);
-useEffect(()=> {
-  let getToken:any = JSON.parse(localStorage.getItem('user'));
-  if (getToken && getToken.token) {
-    // console.log('message',getToken)
-    setToken(getToken.token)
-    setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
-  }
-  getDeposits();
-},[])
- 
-const handleViewDeposit = (deposit:any) => {
-  setAllDeposit(deposit); // Set the deposit being viewed
-  setIsModalOpen(true); // Open the modal
-  setIsDepositComplete(true); // Show the barcode and "Confirm Payment" button
-};
-  const getDeposits = async () => {
-    let getToken:any = JSON.parse(localStorage.getItem('user'))
-    await axios.post(`${ baseUrl }/transaction`,
-      {type:"deposit"},
-      {
-        headers: {
-          Authorization: `Bearer ${getToken.token}`, // Include Bearer token in headers
-          'Content-Type': 'application/json', // Optional, specify content type
-        },
-      }
-    ).then((response) => {
-      // console.log(response.data)
-      if(response.data.status ==='success') {
-        setDeposits(response.data.data)
-      }
-      console.log("allDeposit:", response.data);
-    }).catch((error) => {
+  const [depositSuccessMessage, setDepositSuccessMessage] = useState<
+    string | null
+  >(null);
+  const [deposits, setDeposits] = useState([]);
+  useEffect(() => {
+    let getToken: any = JSON.parse(localStorage.getItem("user"));
+    if (getToken && getToken.token) {
+      // console.log('message',getToken)
+      setToken(getToken.token);
+      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
     }
-    ) 
+    getDeposits();
+  }, []);
+
+  const handleViewDeposit = (deposit: any) => {
+    setAllDeposit(deposit); // Set the deposit being viewed
+    setIsModalOpen(true); // Open the modal
+    setIsDepositComplete(true); // Show the barcode and "Confirm Payment" button
+  };
+  const getDeposits = async () => {
+    let getToken: any = JSON.parse(localStorage.getItem("user"));
+    await axios
+      .post(
+        `${baseUrl}/transaction`,
+        { type: "deposit" },
+        {
+          headers: {
+            Authorization: `Bearer ${getToken.token}`, // Include Bearer token in headers
+            "Content-Type": "application/json", // Optional, specify content type
+          },
+        }
+      )
+      .then((response) => {
+        // console.log(response.data)
+        // console.log(response.data)
+        if (response.data.status === "success") {
+          setDeposits(response.data.data);
+        }
+        console.log("allDeposit:", response.data);
+        console.log("allDeposit:", response.data);
+      })
+      .catch((error) => {});
   };
   const openModal = (crypto: CryptoType) => {
     setSelectedCrypto(crypto);
@@ -127,64 +127,63 @@ const handleViewDeposit = (deposit:any) => {
     }
 
     setLoading(true);
-   let data:any = {
-    method:selectedCrypto,
-    amount:depositAmount,
-    
-   }
-   await axios.post(`${ baseUrl }/transaction/deposit`,data,
-      {
+    let data: any = {
+      method: selectedCrypto,
+      amount: depositAmount,
+    };
+    await axios
+      .post(`${baseUrl}/transaction/deposit`, data, {
         headers: {
           Authorization: `Bearer ${token}`, // Include Bearer token in headers
-          'Content-Type': 'application/json', // Optional, specify content type
+          "Content-Type": "application/json", // Optional, specify content type
         },
-      }
-    ).then((response) => {
-      console.log(response.data)
-      if (response.data.status === 'success') {
-        setNewDeposit(response.data.data.id);
-      
-        // Show notification after 1 second
-        
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === "success") {
+          setNewDeposit(response.data.data.id);
+
+          // Show notification after 1 second
+
           setNotification({
             message: "Deposit successfully.",
             type: "success",
           });
-      
+
           // Hide notification after another 3 seconds
           setTimeout(() => {
             setNotification(null); // Clear the notification
           }, 1000); // 3000ms = 3 seconds
-        
-      
-        setLoading(false);
-        setIsDepositComplete(true);
-      
-      } else {
-        setDepositError("Something went wrong. Please try again.");
-      }
 
-    }).catch((error) => {
-       if (!error.response) {
-        // Handle network error or no response
-        setDepositError('Network error: Please check your internet connection.');
-      } else {
-        const errorResponse = error.response.data;
-         
-        // Display API error messages if available
-        if (errorResponse.message) {
-          if (Array.isArray(errorResponse.message)) {
-            setDepositError(errorResponse.message); // For an array of messages
-          } else {
-            setDepositError(errorResponse.message); // Single error message
-          }
+          setLoading(false);
+          setIsDepositComplete(true);
         } else {
-          setDepositError('An unexpected error occurred. Please try again.');
+          setDepositError("Something went wrong. Please try again.");
         }
-      }
-      //  setDepositError("Network error: Please check your internet connection.");
-    }
-    ).finally(() => {
+      })
+      .catch((error) => {
+        if (!error.response) {
+          // Handle network error or no response
+          setDepositError(
+            "Network error: Please check your internet connection."
+          );
+        } else {
+          const errorResponse = error.response.data;
+
+          // Display API error messages if available
+          if (errorResponse.message) {
+            if (Array.isArray(errorResponse.message)) {
+              setDepositError(errorResponse.message); // For an array of messages
+            } else {
+              setDepositError(errorResponse.message); // Single error message
+            }
+          } else {
+            setDepositError("An unexpected error occurred. Please try again.");
+          }
+        }
+        //  setDepositError("Network error: Please check your internet connection.");
+      })
+      .finally(() => {
         setLoading(false); // Ensure loading state is turned off
       });
   };
@@ -192,45 +191,43 @@ const handleViewDeposit = (deposit:any) => {
   const handleConfirmPayment = async (depositId: number) => {
     setLoading(true);
 
-    await axios.get(`${ baseUrl }/transaction/notify/${newDeposit}`,
-      {
+    await axios
+      .get(`${baseUrl}/transaction/notify/${newDeposit}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Include Bearer token in headers
-          'Content-Type': 'application/json', // Optional, specify content type
+          "Content-Type": "application/json", // Optional, specify content type
         },
-      }
-    ).then((response) => {
-      console.log(response.data)
-      if(response.data.status ==='success') {
-        setNotification({
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.status === "success") {
+          setNotification({
             message:
               "Thank you for confirming your payment. You will receive an email once the admin confirms your payment, and your wallet will be updated instantly.",
             type: "success",
           });
-  
+
           getDeposits();
           setTimeout(closeModal, 2000);
-        // setNotification(true)
-        // setLoading(false)
-       
-        // console.log('NewDeposit',response.data.data)
-        // setIsDepositComplete(true)
+          // setNotification(true)
+          // setLoading(false)
 
-       
-      }else {
+          // console.log('NewDeposit',response.data.data)
+          // setIsDepositComplete(true)
+        } else {
+          setNotification({
+            message: "Payment confirmation failed. Please try again.",
+            type: "error",
+          });
+        }
+      })
+      .catch((error) => {
         setNotification({
-          message: "Payment confirmation failed. Please try again.",
+          message: "An error occurred while confirming your payment.",
           type: "error",
         });
-      }
-
-    }).catch((error) => {
-      setNotification({
-        message: "An error occurred while confirming your payment.",
-        type: "error",
-      });
-    }
-    ).finally(() => {
+      })
+      .finally(() => {
         setLoading(false); // Ensure loading state is turned off
       });
   };
@@ -238,45 +235,42 @@ const handleViewDeposit = (deposit:any) => {
   const approveDeposit = async (depositId: number) => {
     setIndexLoading(depositId);
 
-    await axios.get(`${ baseUrl }/transaction/confirm-deposit/${depositId}`,
-      {
+    await axios
+      .get(`${baseUrl}/transaction/confirm-deposit/${depositId}`, {
         headers: {
           Authorization: `Bearer ${token}`, // Include Bearer token in headers
-          'Content-Type': 'application/json', // Optional, specify content type
+          "Content-Type": "application/json", // Optional, specify content type
         },
-      }
-    ).then((response) => {
-      if(response.data.status ==='success') {
-        setNotification({
-            message:
-              "Successfully approved this deposit",
+      })
+      .then((response) => {
+        if (response.data.status === "success") {
+          setNotification({
+            message: "Successfully approved this deposit",
             type: "success",
           });
-  
+
           setIndexLoading(null);
           getDeposits();
-      }else {
+        } else {
+          setNotification({
+            message: "Deposit approval failed. Please try again.",
+            type: "error",
+          });
+        }
+      })
+      .catch((error) => {
         setNotification({
-          message: "Deposit approval failed. Please try again.",
+          message: "An error occurred while trying to approve your deposit.",
           type: "error",
         });
-      }
-
-    }).catch((error) => {
-      setNotification({
-        message: "An error occurred while trying to approve your deposit.",
-        type: "error",
-      });
-    }
-    ).finally(() => {
+      })
+      .finally(() => {
         setIndexLoading(null); // Ensure loading state is turned off
       });
   };
 
-
   return (
     <div className="space-y-8 text-white">
-
       {!isAdmin && (
         <div>
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 mb-4">
@@ -285,7 +279,9 @@ const handleViewDeposit = (deposit:any) => {
           {/* Deposit Cards */}
           <Card className="bg-gray-800 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-white">Choose Deposit Method</CardTitle>
+              <CardTitle className="text-white">
+                Choose Deposit Method
+              </CardTitle>
               <CardDescription className="text-gray-300">
                 Select a cryptocurrency to deposit funds into your account.
               </CardDescription>
@@ -390,7 +386,6 @@ const handleViewDeposit = (deposit:any) => {
               </div>
             </div>
           )}
-
         </div>
       )}
 
@@ -413,23 +408,21 @@ const handleViewDeposit = (deposit:any) => {
             <tbody>
               {deposits.map((deposit, index) => (
                 <tr key={deposit.id} className="border-t border-gray-700">
-                  <td className="px-4 py-2">{index+1}</td>
+                  <td className="px-4 py-2">{index + 1}</td>
                   <td className="px-4 py-2">{deposit.amount}</td>
                   <td className="px-4 py-2">{deposit.method}</td>
-                
+
                   <td
                     className={`px-4 py-2 ${
-                      deposit.status === 1
-                        ? "text-green-500"
-                        : "text-red-500"
+                      deposit.status === 1 ? "text-green-500" : "text-red-500"
                     }`}
                   >
-                  {deposit.status === 1?'Confirmed':'pending'}
+                    {deposit.status === 1 ? "Confirmed" : "pending"}
                   </td>
                   <td className="px-4 py-2">
                     {deposit.status === 0 && (
                       <Button
-                      onClick={() => handleViewDeposit(deposit)}
+                        onClick={() => handleViewDeposit(deposit)}
                         // onClick={() => handleConfirmPayment()}
                         // onClick={() => handleConfirmPayment(deposit)}
                         // onClick={handleConfirmPayment}
@@ -453,11 +446,11 @@ const handleViewDeposit = (deposit:any) => {
           </h2>
 
           {notification && (
-              <Notification
-                message={notification.message}
-                type={notification.type}
-              />
-            )}
+            <Notification
+              message={notification.message}
+              type={notification.type}
+            />
+          )}
 
           <div className="overflow-x-auto bg-gray-800 border-gray-700 rounded-lg shadow-lg">
             <table className="min-w-full table-auto text-sm text-gray-200">
@@ -474,39 +467,39 @@ const handleViewDeposit = (deposit:any) => {
               <tbody>
                 {deposits.map((deposit, index) => (
                   <tr key={deposit.id} className="border-t border-gray-700">
-                    <td className="px-4 py-2">{index+1}</td>
-                    <td className="px-4 py-2">{deposit.user && deposit.user.name}</td>
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">
+                      {deposit.user && deposit.user.name}
+                    </td>
                     <td className="px-4 py-2">{deposit.amount}</td>
                     <td className="px-4 py-2">{deposit.method}</td>
-                  
+
                     <td
                       className={`px-4 py-2 ${
-                        deposit.status === 1
-                          ? "text-green-500"
-                          : "text-red-500"
+                        deposit.status === 1 ? "text-green-500" : "text-red-500"
                       }`}
                     >
-                    {deposit.status === 1?'Confirmed':'pending'}
+                      {deposit.status === 1 ? "Confirmed" : "pending"}
                     </td>
-                    <td className={`px-4 py-2 ${
-                        deposit.status === 1
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}>
+                    <td
+                      className={`px-4 py-2 ${
+                        deposit.status === 1 ? "text-green-500" : "text-red-500"
+                      }`}
+                    >
                       {deposit.status === 0 && (
                         <Button
-                        onClick={() => approveDeposit(deposit.id)}
+                          onClick={() => approveDeposit(deposit.id)}
                           // onClick={() => handleConfirmPayment()}
                           // onClick={() => handleConfirmPayment(deposit)}
                           // onClick={handleConfirmPayment}
                           className="bg-blue-600 hover:bg-blue-500 text-white"
                         >
-                         {indexLoading == deposit.id ? "Processing..." : "Approve"}
+                          {indexLoading == deposit.id
+                            ? "Processing..."
+                            : "Approve"}
                         </Button>
                       )}
-                      {deposit.status === 1 && (
-                        <span>Approved</span>
-                      )}
+                      {deposit.status === 1 && <span>Approved</span>}
                     </td>
                   </tr>
                 ))}
