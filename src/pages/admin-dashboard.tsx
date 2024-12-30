@@ -89,7 +89,7 @@ export default function AdminDashboard() {
                 { name: 'Withdraw', icon: <ArrowUpRight className="h-5 w-5" />, id: 'withdraw' },
                 // { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
                 { name: 'Transactions', icon: <History className="h-5 w-5" />, id: 'transactions' },
-                { name: 'Packages', icon: <Package className="h-5 w-5" />, id: 'packages' },
+                { name: 'Invest', icon: <Package className="h-5 w-5" />, id: 'packages' },
                 { name: 'Investment History', icon: <History className="h-5 w-5" />, id: 'investment-history' },
                 { name: 'Earnings', icon: <DollarSign className="h-5 w-5" />, id: 'earnings' },
                 { name: file, icon: <User className="h-5 w-5" />, id: 'profile' },
