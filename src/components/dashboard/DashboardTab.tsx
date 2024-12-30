@@ -12,6 +12,7 @@ export default function DashboardTab() {
   // const [cryptoPrices, setCryptoPrices] = useState<{ btc: number; eth: number }>({ btc: 0, eth: 0 });
   const [activeInvestments, setActiveInvestments] = useState<number>(0); // New state
   const [loading, setLoading] = useState<boolean>(true);
+  const [showPopup, setShowPopup] = useState(false);
   const baseUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -33,7 +34,8 @@ export default function DashboardTab() {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(reflink);
-    alert("Referral link copied to clipboard!"); // Optional notification
+    setShowPopup(true); // Show popup
+    setTimeout(() => setShowPopup(false), 3000);
   };
 
   const fetchWalletBalance = async (token: string) => {
@@ -145,12 +147,17 @@ export default function DashboardTab() {
           />
           <Button
             onClick={copyToClipboard}
-            className="bg-blue-500 text-white hover:bg-blue-400 rounded-lg px-4 py-2"
+            className="bg-blue-500 text-white hover:bg-blue-400 rounded-lg px-4 py-2 focus:outline-none"
           >
             Copy
           </Button>
         </div>
       </div>
+      {showPopup && (
+        <div className="absolute top-0 right-0 mt-4 p-3 bg-green-500 text-white rounded-lg shadow-lg">
+          Referral link copied to clipboard!
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="bg-gray-800 border-gray-700 text-white">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
