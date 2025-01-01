@@ -47,7 +47,7 @@ export default function InvestmentHistoryTab() {
     if (loading) {
       return (
         <tr>
-          <td colspan='6'>loading...</td>
+          <td colspan='6'>Loading...</td>
         </tr>
       );
     }
@@ -95,7 +95,7 @@ export default function InvestmentHistoryTab() {
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
         Investment History
       </h2>
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
           <CardTitle>Your Investments</CardTitle>
           <CardDescription>

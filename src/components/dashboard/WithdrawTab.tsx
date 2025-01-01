@@ -34,6 +34,7 @@ export default function WithdrawTab() {
   const [history,setHistory] = useState<any>([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadWithdraw, setLoadWithdraw] = useState(false);
   const [indexLoading, setIndexLoading] = useState<number | null>(null);
   const [notification, setNotification] = useState<{
     message: string;
@@ -62,6 +63,9 @@ export default function WithdrawTab() {
       type:"withdraw",
       
     }
+
+    setLoadWithdraw(true);
+
     await axios.post(
       `${ baseUrl }/transaction`, 
       data,
@@ -73,6 +77,7 @@ export default function WithdrawTab() {
       if(response.data.status === "success")
         console.log("withdrawal:", response.data);
         setHistory(response.data.data)
+        setLoadWithdraw(false);
     })
     .catch((error:any) => {
       alert("somthing went wrong ")
@@ -243,71 +248,81 @@ export default function WithdrawTab() {
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
         Withdrawal History
       </h2>
-      <Card className="bg-gray-800 border-gray-700">
-                <CardHeader>
-                  <CardTitle style={{color: 'white'}}>Recent Withdrawal History</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="text-left text-gray-400">
-                        <th className="pb-4">SN</th>
-                        <th className="pb-4">User</th>
-                        <th className="pb-4">Amount</th>
-                        <th className="pb-4">Date</th>
-                        <th className="pb-4">Wallet Address</th>
-                        <th className="pb-4">Crypto Currency</th>
-                        <th className="pb-4">Status</th>
-                        {isAdmin && (
-                          <th className="pb-4">Action</th>
+      <Card className={`bg-gray-800 border-gray-700 ${loadWithdraw ? 'p-4' : 'p-2'}`}  style={{
+          color: 'white',
+        }}>  
+        {loadWithdraw ? "Loading..." : (
+          <>
+            <CardHeader>
+              <CardTitle style={{color: 'white'}}>Recent Withdrawal History</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-gray-400">
+                    <th className="pb-4">SN</th>
+                    {isAdmin && (
+                      <th className="pb-4">User</th>
+                    )}
+                    <th className="pb-4">Amount</th>
+                    <th className="pb-4">Date</th>
+                    <th className="pb-4">Wallet Address</th>
+                    <th className="pb-4">Crypto Currency</th>
+                    <th className="pb-4">Status</th>
+                    {isAdmin && (
+                      <th className="pb-4">Action</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.map((tx,i) => <tr key={tx.id} className="border-t border-gray-700">
+                    <td className="py-4 text-white">{i+1}</td>
+                    {isAdmin && (
+                      <td className="py-4 text-white">{tx.user && tx.user.name}</td>
+                    )}
+                    <td className={`py-4 ${tx.status == 1? 'text-green-400' : 'text-red-400'}`}>{tx.amount && tx.amount}</td>
+                    <td className="py-4 text-white">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
+                    <td className="py-4 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
+                    <td className="py-4 text-white">{tx.method != null ? tx.method : "NULL"}</td>
+                    <td className="py-4 text-white">
+                      <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                        }`}>
+                          {tx.status === 1 ? 'completed' : 'pending'}
+                        
+                      </span>
+                    </td>
+                    {isAdmin && (
+                      <td className={`px-4 py-2 ${
+                          tx.status === 1
+                            ? "text-green-500"
+                            : "text-red-500"
+                        }`}>
+                        {tx.status === 0 && (
+                          <Button
+                          onClick={() => approveWithdrawal(tx.id)}
+                            // onClick={() => handleConfirmPayment()}
+                            // onClick={() => handleConfirmPayment(tx)}
+                            // onClick={handleConfirmPayment}
+                            className="bg-blue-600 hover:bg-blue-500 text-white"
+                          >
+                            {indexLoading == tx.id ? "Processing..." : "Approve"}
+                          </Button>
                         )}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {history.map((tx,i) => <tr key={tx.id} className="border-t border-gray-700">
-                        <td className="py-4 text-white">{i+1}</td>
-                        <td className="py-4 text-white">{tx.user && tx.user.name}</td>
-                        <td className={`py-4 ${tx.status == 1? 'text-green-400' : 'text-red-400'}`}>{tx.amount && tx.amount}</td>
-                        <td className="py-4 text-white">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
-                        <td className="py-4 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
-                        <td className="py-4 text-white">{tx.method != null ? tx.method : "NULL"}</td>
-                        <td className="py-4 text-white">
-                          <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
-                            }`}>
-                              {tx.status === 1 ? 'completed' : 'pending'}
-                           
-                          </span>
-                        </td>
-                        {isAdmin && (
-                          <td className={`px-4 py-2 ${
-                              tx.status === 1
-                                ? "text-green-500"
-                                : "text-red-500"
-                            }`}>
-                            {tx.status === 0 && (
-                              <Button
-                              onClick={() => approveWithdrawal(tx.id)}
-                                // onClick={() => handleConfirmPayment()}
-                                // onClick={() => handleConfirmPayment(tx)}
-                                // onClick={handleConfirmPayment}
-                                className="bg-blue-600 hover:bg-blue-500 text-white"
-                              >
-                                {indexLoading == tx.id ? "Processing..." : "Approve"}
-                              </Button>
-                            )}
-                            {tx.status === 1 && (
-                              <span>Approved</span>
-                            )}
-                          </td>
+                        {tx.status === 1 && (
+                          <span>Approved</span>
                         )}
-                      </tr>
-                      )}
-                    </tbody>
-                  
-                    </table>
-                    
-                    </CardContent>
-                   </Card>
+                      </td>
+                    )}
+                  </tr>
+                  )}
+                </tbody>
+              
+                </table>
+                
+            </CardContent>
+          </>
+        )}
+      </Card>
                    
     </div>
     

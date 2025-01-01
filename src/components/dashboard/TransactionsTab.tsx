@@ -74,7 +74,7 @@ export default function TransactionsTab() {
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
           Investment History
         </h2>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="bg-gray-800 border-gray-700 text-white">
           <CardHeader>
             <CardTitle>Your Transactions</CardTitle>
             <CardDescription>
@@ -111,8 +111,8 @@ export default function TransactionsTab() {
 
       <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-          <CardDescription>Your latest account activities.</CardDescription>
+          <CardTitle className="text-white">Recent Transactions</CardTitle>
+          <CardDescription className="text-white">Your latest account activities.</CardDescription>
         </CardHeader>
         <CardContent>
           <table className="w-full text-white">

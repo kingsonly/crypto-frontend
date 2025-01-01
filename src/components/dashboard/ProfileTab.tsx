@@ -19,6 +19,7 @@ export default function ProfileTab() {
   const baseUrl = import.meta.env.VITE_API_URL;
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [token, setToken] = useState<string>("");
+  const [loadUser, setLoadUser] = useState<boolean>(false);
   // State to hold user data
   const [userData, setUserData] = useState({
     name: "",
@@ -96,6 +97,7 @@ export default function ProfileTab() {
 
   const getUsers = async () => {
     let getToken:any = JSON.parse(localStorage.getItem('user'))
+    setLoadUser(true);
     await axios.post(`${ baseUrl }/user`,
       {},
       {
@@ -108,6 +110,7 @@ export default function ProfileTab() {
       // console.log(response.data)
       if(response.data.status ==='success') {
         setUsers(response.data.data)
+        setLoadUser(false);
         console.log('allUsers',response.data.data)
       }
       console.log("allDeposit:", response.data);
@@ -250,45 +253,49 @@ export default function ProfileTab() {
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
           All Users
         </h2>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="bg-gray-800 border-gray-700 text-white">
           <CardHeader>
             <CardTitle style={{color: 'white'}}>All Users</CardTitle>
           </CardHeader>
           <CardContent>
-            <table className="w-full">
-              <thead>
-                <tr className="text-left text-gray-400">
-                  <th className="pb-4">SN</th>
-                  <th className="pb-4">Name</th>
-                  <th className="pb-4">Username</th>
-                  <th className="pb-4">Email</th>
-                  <th className="pb-4">Phone</th>
-                  <th className="pb-4">Role</th>
-                  {/* <th className="pb-4">Date</th> */}
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user,i) => <tr key={user.id} className="border-t border-gray-700">
-                  <td className="py-4 text-white">{i+1}</td>
-                  <td className="py-4 text-white">{user.name != null ? user.name : "NULL"}</td>
-                  <td className="py-4 text-white">{user.username != null ? user.username : "NULL"}</td>
-                  <td className="py-4 text-white">{user.email != null ? user.email : "NULL"}</td>
-                  <td className="py-4 text-white">{user.phone != null ? user.phone : "NULL"}</td>
-                  <td className="py-4 text-white">
-                    <span className={`px-2 py-1 rounded-full text-xs ${user.is_admin === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
-                      }`}>
-                        {user.is_admin === 1 ? 'Admin' : 'User'}
-                      
-                    </span>
-                  </td>
-                  {/* <td className="py-4 text-white">{user != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td> */}
-                </tr>
-                )}
-              </tbody>
-            
-              </table>
+          {loadUser ? "Loading..." : (
+            <>
+              <table className="w-full">
+                <thead>
+                  <tr className="text-left text-gray-400">
+                    <th className="pb-4">SN</th>
+                    <th className="pb-4">Name</th>
+                    <th className="pb-4">Username</th>
+                    <th className="pb-4">Email</th>
+                    <th className="pb-4">Phone</th>
+                    <th className="pb-4">Role</th>
+                    {/* <th className="pb-4">Date</th> */}
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user,i) => <tr key={user.id} className="border-t border-gray-700">
+                    <td className="py-4 text-white">{i+1}</td>
+                    <td className="py-4 text-white">{user.name != null ? user.name : "NULL"}</td>
+                    <td className="py-4 text-white">{user.username != null ? user.username : "NULL"}</td>
+                    <td className="py-4 text-white">{user.email != null ? user.email : "NULL"}</td>
+                    <td className="py-4 text-white">{user.phone != null ? user.phone : "NULL"}</td>
+                    <td className="py-4 text-white">
+                      <span className={`px-2 py-1 rounded-full text-xs ${user.is_admin === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                        }`}>
+                          {user.is_admin === 1 ? 'Admin' : 'User'}
+                        
+                      </span>
+                    </td>
+                    {/* <td className="py-4 text-white">{user != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td> */}
+                  </tr>
+                  )}
+                </tbody>
               
-            </CardContent>
+              </table>
+            </>
+          )}
+              
+          </CardContent>
         </Card>
       </div>
     )}
