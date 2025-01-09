@@ -60,7 +60,6 @@ export default function DepositTab() {
   const baseUrl = import.meta.env.VITE_API_URL
   const [isDepositComplete, setIsDepositComplete] = useState(false);
   const [depositSuccessMessage, setDepositSuccessMessage] = useState<string | null>(null);
-
   const [deposits, setDeposits] = useState([
    
   ]);
