@@ -28,20 +28,24 @@ export default function TopMenu() {
   const renderOptionalMenu = () => {
     if (isLoggedin) {
       return (
-        <span>
-          <a
-            href="/dashboard"
-            className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
-            Dashboard
-          </a>
-          <a
-            href="/logout"
-            className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-          >
-            Logout
-          </a>
-        </span>
+        <div className="sm:flex sm:space-x-4">
+          <div>
+            <a
+              href="/dashboard"
+              className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              Dashboard
+            </a>
+          </div>
+          <div>
+            <a
+              href="/logout"
+              className="text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
+            >
+              Logout
+            </a>
+          </div>
+        </div>
       );
     }
 
