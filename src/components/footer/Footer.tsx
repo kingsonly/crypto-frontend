@@ -22,13 +22,6 @@ const Footer = () => {
           </ul>
         </div>
         <div>
-          <h4 className="text-xl font-semibold mb-4 text-cyan-300">Resources</h4>
-          <ul className="space-y-2 text-gray-400">
-            <li><a href="#" className="hover:text-cyan-400 transition-colors">FAQ</a></li>
-            <li><a href="#" className="hover:text-cyan-400 transition-colors">Support</a></li>
-          </ul>
-        </div>
-        <div>
           <h4 className="text-xl font-semibold mb-4 text-teal-300">Connect</h4>
           <ul className="space-y-2 text-gray-400">
             <li><a href="#" className="hover:text-teal-400 transition-colors">Twitter</a></li>
