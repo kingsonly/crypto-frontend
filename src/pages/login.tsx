@@ -1,23 +1,116 @@
 'use client'
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Bitcoin, AlertCircle } from "lucide-react"
-
+import { Bitcoin, Check} from "lucide-react"
+import TopMenu from "../components/menu/TopMenu";
+import axios from 'axios'
 
 export default function Login() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+  const baseUrl = import.meta.env.VITE_API_URL
+  // Handle signup redirect
+  const handleLoginRedirect = () => {
+    navigate('/signup');
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Here you would typically handle the login logic
-    // For now, we'll just simulate an error for demonstration
-    setError('Invalid email or password. Please try again.')
-  }
+  // Validate email and password
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validatePassword = (password: string) => /^(?=.*[A-Z]).{8,}$/.test(password);
+
+  const handleFocus = (field: string) => {
+    setError(prevError => {
+      const newError = { ...prevError };
+      delete newError[field];
+      return newError;
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    setIsLoading(true);
+    setError({}); // Clear previous errors
+    setErrorMessages([]); // Clear previous error messages
+
+    const newError: { [key: string]: string } = {};
+
+    if (!email.trim()) {
+      newError.email = 'Email is required';
+    } else if (!validateEmail(email)) {
+      newError.email = 'Please enter a valid email address';
+    }
+
+    if (!password.trim()) {
+      newError.password = 'Password is required';
+    } else if (!validatePassword(password)) {
+      newError.password = 'Password must be at least 8 characters long and contain an uppercase letter';
+    }
+
+    if (Object.keys(newError).length > 0) {
+      setError(newError);
+      setIsLoading(false);
+      return;
+    }
+
+    // Successful login
+    let data: any = {
+      email: email,
+      password: password,
+    }
+     
+    await axios.post(`${ baseUrl }/login`, data)
+    .then(function (response) {
+      console.log('API Response:', response.data);  // Log the full response to inspect its structure
+  
+      if (response.data.data.status === 'success') {
+        const { name, email, token, is_admin } = response.data.data;  // Assuming the response contains this data
+        localStorage.setItem('user', JSON.stringify({ name, email, token, is_admin }));
+
+        setIsLoading(false); // Trigger success message
+        navigate('/dashboard');
+        
+      } 
+    })
+    .catch(function (error) {
+      setIsLoading(false);
+      console.log('Error occurred:', error);
+
+      setSuccess(false);  // Update success state in case of error
+
+      if (!error.response) {
+        // Handle network error or no response
+        setErrorMessages(['Network error: Please check your internet connection.']);
+      } else {
+        const errorResponse = error.response.data;
+
+        // Display API error messages if available
+        if (errorResponse.message) {
+          if (Array.isArray(errorResponse.message)) {
+            setErrorMessages(errorResponse.message); // For an array of messages
+          } else {
+            setErrorMessages([errorResponse.message]); // Single error message
+          }
+        } else {
+          setErrorMessages(['An unexpected error occurred. Please try again.']);
+        }
+      }
+    })
+    .finally(() => {
+      setIsLoading(false); // Ensure loading state is turned off
+    });
+      // setIsLoading(false);
+    // });
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden w-screen">
@@ -30,46 +123,7 @@ export default function Login() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
-                <Bitcoin className="h-8 w-8 text-yellow-400" />
-                <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                  CoinShares Mining
-                </span>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Services
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <TopMenu />
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
@@ -78,7 +132,29 @@ export default function Login() {
             </h1>
           </div>
 
+          {/* Success Message */}
+          {success && (
+            <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative mb-4" role="alert">
+              <div className="flex items-center">
+                <Check className="h-5 w-5 mr-2" />
+                <span>Login successful! Redirecting to dashboard...</span>
+              </div>
+            </div>
+          )}
+
+          {/* Error Messages */}
+         {errorMessages.length > 0 && (
+            <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative mb-4" role="alert">
+              <ul className="list-disc list-inside">
+            {errorMessages.map((message, index) => (
+          <li key={index}>{message}</li>
+        ))}
+         </ul>
+      </div>
+)}
+
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-gray-300">Email</Label>
               <Input
@@ -87,10 +163,14 @@ export default function Login() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                onFocus={() => handleFocus('email')}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.email ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
+              {error.email && <div className="text-red-300 text-sm">{error.email}</div>}
             </div>
+
+            {/* Password Field */}
             <div className="space-y-2">
               <Label htmlFor="password" className="text-gray-300">Password</Label>
               <Input
@@ -99,29 +179,31 @@ export default function Login() {
                 placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                onFocus={() => handleFocus('password')}
+                className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                  }`}
               />
+              {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
             </div>
 
-            {error && (
-              <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
-                <div className="flex items-center">
-                  <AlertCircle className="h-5 w-5 mr-2" />
-                  <span>{error}</span>
-                </div>
-              </div>
-            )}
-
-            <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600">
-              Login <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
+            {/* Submit Button */}
+            <Button
+                      type="submit"
+                   disabled={isLoading} // Disable the button when loading
+                   className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
+>
+               {isLoading ? "Loading..." : "Log in"}
+                </Button>
           </form>
 
+          {/* Sign Up Link */}
           <div className="mt-6 text-center">
             <p className="text-gray-400">
               Don't have an account?{' '}
-              <Button href="/signup" className="text-blue-400 hover:text-blue-300 transition-colors">
+              <Button
+                onClick={handleLoginRedirect}
+                className="text-blue-400 hover:text-blue-300 transition-colors"
+              >
                 Sign up
               </Button>
             </p>
@@ -129,5 +211,6 @@ export default function Login() {
         </div>
       </div>
     </div>
-  )
+
+  );
 }

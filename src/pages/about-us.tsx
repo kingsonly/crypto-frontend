@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Bitcoin, Zap, Globe, Target, Rocket } from "lucide-react"
-
-
+import vision from "../assets/images/vision.jpg";
+import TopMenu from "../components/menu/TopMenu";
+import Footer from "../components/footer/Footer";
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -15,46 +16,7 @@ export default function AboutUs() {
       {/* Content wrapper */}
       <div className="relative z-10">
         {/* Navigation */}
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
-                <Bitcoin className="h-8 w-8 text-yellow-400" />
-                <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                  CoinShares Mining
-                </span>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Services
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
+        <TopMenu />
 
         {/* Hero Section */}
         <section className="pt-20 px-4 md:px-6 lg:px-8 relative overflow-hidden">
@@ -92,11 +54,9 @@ export default function AboutUs() {
               <div className="relative group">
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-teal-500 rounded-lg blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src={vision}
                   alt="Coinshares Mining Facility"
-                  width={600}
-                  height={400}
-                  className="rounded-lg shadow-2xl relative"
+                  className="rounded-lg shadow-2xl relative w-[100%] h-[500px]"
                 />
               </div>
             </div>
@@ -142,7 +102,7 @@ export default function AboutUs() {
           </div>
         </section>
 
-        {/* Footer (you can reuse the footer from the main page) */}
+        <Footer />
       </div>
     </div>
   )

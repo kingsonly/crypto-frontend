@@ -1,33 +1,186 @@
 'use client'
 
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowRight, Bitcoin, AlertCircle, Check } from "lucide-react"
+import { Bitcoin, AlertCircle, Check } from "lucide-react"
+import TopMenu from "../components/menu/TopMenu";
+import axios from 'axios'
+// import Navbar from '@/components/ui/Navbar';
 
 
 export default function Signup() {
+  const [username, setUserName] = useState('')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
-  const [error, setError] = useState('')
+  const [error, setError] = useState<{ [key: string]: string }>({})
+  const [errorMessages, setErrorMessages] = useState<string[]>([])
   const [success, setSuccess] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Initialize the useNavigate hook
+  const baseUrl = import.meta.env.VITE_API_URL
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Handle login redirect
+  const handleLoginRedirect = () => {
+    navigate('/login'); // This will redirect to the login page
+  };
+
+  const validateEmail = (email: string) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return regex.test(email)
+  }
+
+  const validatePassword = (password: string) => {
+    return /^(?=.*[A-Z]).{8,}$/.test(password)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+
+    // Set loading state to true when the request starts
+    setIsLoading(true);
+
+    // Clear previous errors
+    setError({})
     setSuccess(false)
 
-    if (password !== confirmPassword) {
-      setError('Passwords do not match')
+    let newError: { [key: string]: string } = {}
+
+    // UserName validation
+    if (!username.trim()) {
+      newError.username = 'UserName is required'
+    }
+
+    // Name validation
+    if (!name.trim()) {
+      newError.name = 'Full Name is required'
+    }
+
+    // Email validation
+    if (!email.trim()) {
+      newError.email = 'Email is required'
+    } else if (!validateEmail(email)) {
+      newError.email = 'Please enter a valid email address'
+    }
+
+    // Password validation
+    if (!password.trim()) {
+      newError.password = 'Password is required'
+    } else if (!validatePassword(password)) {
+      newError.password = 'Password must include an uppercase letter and be at least 8 characters long'
+    }
+
+    // Confirm password validation
+    if (!confirmPassword.trim()) {
+      newError.confirmPassword = 'Please confirm your password'
+    } else if (password !== confirmPassword) {
+      newError.confirmPassword = 'Passwords do not match'
+    }
+
+    // If there are any errors, prevent form submission
+    if (Object.keys(newError).length > 0) {
+      setError(newError)
+      setIsLoading(false); // Stop loading if there are errors
       return
     }
 
     // Here you would typically handle the signup logic
-    // For now, we'll just simulate a successful signup
-    setSuccess(true)
+    // setSuccess(true)
+
+    let data: any = {
+      name: name,
+      username: username,
+      email: email,
+      password: password,
+    }
+
+
+    await axios.post(`${ baseUrl }/signup`, data)
+      .then(function (response) {
+        console.log('API Response:', response.data);  // Log the full response to inspect its structure
+
+        if (response.data.status === 'success') {
+       
+          setSuccess(true);
+          setErrorMessages([]);  // Clear errors if successful
+        } else {
+          let errors: string[] = [];
+
+          // Check if there are any field-specific errors in the response data
+          if (response.data.data) {
+            Object.keys(response.data.data).forEach((field) => {
+              const fieldErrors = response.data.data[field];
+
+              // Ensure fieldErrors is an array before processing
+              if (Array.isArray(fieldErrors)) {
+                // Only push the error messages, not the field names
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Push only the error message
+                });
+              }
+            });
+          }
+
+          // If no specific errors, check the general message (fallback)
+          if (errors.length === 0 && response.data.message) {
+            errors.push(response.data.message);  // Push the general message if no field-specific errors
+          }
+
+          setSuccess(false);
+          setErrorMessages(errors);  // Display the errors in the state
+        }
+      })
+      .catch(function (error) {
+        console.log('Error occurred:', error);
+
+        // Handle server errors here
+        if (error.response) {
+          const errorResponse = error.response.data;
+          console.log('Error response data:', errorResponse);  // Log the error response
+
+          let errors: string[] = [];
+          // Check for any errors in the response data
+          if (errorResponse.data) {
+            Object.keys(errorResponse.data).forEach((field) => {
+              const fieldErrors = errorResponse.data[field];
+
+              console.log(`Field: ${field}, Errors:`, fieldErrors);  // Log field-specific errors
+
+              if (Array.isArray(fieldErrors)) {
+                fieldErrors.forEach((error) => {
+                  errors.push(error);  // Only push the error message
+                });
+              }
+            });
+
+            setErrorMessages(errors);
+          } else if (errorResponse.message) {
+            setErrorMessages([errorResponse.message]);
+          } else {
+            setErrorMessages(['An unexpected error occurred. Please try again later.']);
+          }
+        } else if (error.request) {
+          setErrorMessages(['Unable to reach the server. Please check your internet connection.']);
+        } else {
+          setErrorMessages(['An error occurred while processing your request.']);
+        }
+
+        setSuccess(false);  // Update success state in case of error
+      });
+
+    setIsLoading(false);
+  }
+
+  const handleFocus = (field: string) => {
+    setError((prevError) => {
+      const newError = { ...prevError }
+      delete newError[field]
+      return newError
+    })
   }
 
   return (
@@ -41,63 +194,63 @@ export default function Signup() {
 
       {/* Content wrapper */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-4">
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-gray-800">
-          <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              <div className="flex items-center">
-                <Bitcoin className="h-8 w-8 text-yellow-400" />
-                <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
-                  CoinShares Mining
-                </span>
-              </div>
-              <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    About
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Services
-                  </a>
-                  <a
-                    href="#"
-                    className="px-3 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors"
-                  >
-                    Contact
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
+
+        <TopMenu />
+
         <div className="w-full max-w-md">
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 mt-10">
             <Bitcoin className="h-12 w-12 text-yellow-400 mx-auto mb-4" />
             <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400">
               Sign Up for CoinShares Mining
             </h1>
           </div>
 
+          {/* Show general error messages */}
+          {errorMessages.length > 0 && (
+            <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
+              <div className="flex items-center">
+                <AlertCircle className="h-5 w-5 mr-2" />
+                <span>
+                  {errorMessages.map((msg, index) => (
+                    <div key={index}>{msg}</div>
+                  ))}
+                </span>
+              </div>
+            </div>
+          )}
+
           {success ? (
             <div className="bg-green-900/50 border border-green-500 text-green-300 px-4 py-3 rounded relative" role="alert">
               <div className="flex items-center">
                 <Check className="h-5 w-5 mr-2" />
                 <span>Account created successfully! You can now log in.</span>
+                <Button
+                  onClick={handleLoginRedirect}
+                  className="text-blue-400 hover:text-blue-300 transition-colors">
+                  Log in
+                </Button>
               </div>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-gray-300">UserName</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Enter UserName"
+                  value={username}
+                  onChange={(e) => setUserName(e.target.value)}
+                  onFocus={() => handleFocus('username')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.username ? 'border-red-500' : 'border-gray-700'
+                    }`}
+                />
+                {error.username && (
+                  <div className="text-red-300 text-sm">{error.username}</div>
+                )}
+              </div>
+
+
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-gray-300">Full Name</Label>
                 <Input
@@ -106,10 +259,15 @@ export default function Signup() {
                   placeholder="Enter your full name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  required
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                  onFocus={() => handleFocus('name')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.name ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
+                {error.name && (
+                  <div className="text-red-300 text-sm">{error.name}</div>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-gray-300">Email</Label>
                 <Input
@@ -118,10 +276,15 @@ export default function Signup() {
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                  onFocus={() => handleFocus('email')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.email ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
+                {error.email && (
+                  <div className="text-red-300 text-sm">{error.email}</div>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-300">Password</Label>
                 <Input
@@ -130,10 +293,15 @@ export default function Signup() {
                   placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                  onFocus={() => handleFocus('password')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
+                {error.password && (
+                  <div className="text-red-300 text-sm">{error.password}</div>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
                 <Input
@@ -142,22 +310,21 @@ export default function Signup() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+                  onFocus={() => handleFocus('confirmPassword')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.confirmPassword ? 'border-red-500' : 'border-gray-700'
+                    }`}
                 />
+                {error.confirmPassword && (
+                  <div className="text-red-300 text-sm">{error.confirmPassword}</div>
+                )}
               </div>
 
-              {error && (
-                <div className="bg-red-900/50 border border-red-500 text-red-300 px-4 py-3 rounded relative" role="alert">
-                  <div className="flex items-center">
-                    <AlertCircle className="h-5 w-5 mr-2" />
-                    <span>{error}</span>
-                  </div>
-                </div>
-              )}
-
-              <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-teal-500 hover:from-blue-600 hover:to-teal-600">
-                Sign Up <ArrowRight className="ml-2 h-5 w-5" />
+              <Button
+                type="submit"
+                disabled={isLoading} // Disable the button when loading
+                className="w-full bg-gradient-to-r from-teal-400 via-cyan-400 to-blue-400 text-white hover:from-teal-300 hover:via-cyan-300 hover:to-blue-300"
+              >
+                {isLoading ? "Loading..." : "Sign Up"}
               </Button>
             </form>
           )}
@@ -165,9 +332,7 @@ export default function Signup() {
           <div className="mt-6 text-center">
             <p className="text-gray-400">
               Already have an account?{' '}
-              <Button href="/login" className="text-blue-400 hover:text-blue-300 transition-colors">
-                Log in
-              </Button>
+
             </p>
           </div>
         </div>
