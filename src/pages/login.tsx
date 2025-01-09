@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Bitcoin, Check} from "lucide-react"
+import { Bitcoin, Check, Eye, EyeOff } from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
 import axios from 'axios'
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<{ [key: string]: string }>({});
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessages, setErrorMessages] = useState<string[]>([])
@@ -34,6 +35,8 @@ export default function Login() {
       return newError;
     });
   };
+  
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,21 +174,32 @@ export default function Login() {
             </div>
 
             {/* Password Field */}
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-gray-300">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => handleFocus('password')}
-                className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+            <div>
+              <Label htmlFor="password" className="text-gray-300">
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={() => handleFocus('password')}
+                  className={`bg-gray-800 text-white placeholder-gray-400 ${
+                    error.password ? 'border-red-500' : 'border-gray-700'
                   }`}
-              />
+                />
+                <div
+                  onClick={togglePasswordVisibility}
+                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
+                >
+                  {showPassword ? <EyeOff /> : <Eye />}
+                </div>
+              </div>
               {error.password && <div className="text-red-300 text-sm">{error.password}</div>}
             </div>
-
+            
             {/* Submit Button */}
             <Button
                       type="submit"
