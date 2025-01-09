@@ -49,6 +49,8 @@ export default function ProfileTab() {
     }
 
     getUsers();
+
+  
   }, []);
 
   const nextCategory = () => {
@@ -101,6 +103,7 @@ export default function ProfileTab() {
       setIsSubmitting(false);
     }
   };
+
 
   const getUsers = async () => {
     let getToken:any = JSON.parse(localStorage.getItem('user'))
@@ -331,6 +334,57 @@ export default function ProfileTab() {
         </Card>
       </div>
     )}
-    </div>
-  );
-}
+        {/* Modal */}
+        {isModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-gray-800 p-6 rounded-lg w-full max-w-md text-white space-y-4">
+              <h3 className="text-xl font-semibold">Change Password</h3>
+              <form className="space-y-4" onSubmit={handlePasswordChange}>
+                <div className="space-y-2">
+                  <Label htmlFor="currentPassword">Current Password:</Label>
+                  <Input
+                    id="currentPassword"
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="bg-gray-700 border-gray-600"
+                    placeholder="Enter current password"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newPassword">New Password:</Label>
+                  <Input
+                    id="newPassword"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="bg-gray-700 border-gray-600"
+                    placeholder="Enter new password"
+                  />
+                </div>
+                {message && <p className="text-sm text-red-500">{message}</p>}
+                <div className="flex justify-end space-x-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsModalOpen(false)}
+                    className="bg-gray-600 hover:bg-gray-500"
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="bg-teal-500 hover:bg-teal-400"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Updating..." : "Update"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    )}
+
+    
