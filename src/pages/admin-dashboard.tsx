@@ -75,8 +75,8 @@ export default function AdminDashboard() {
               ].map((item) => (
                 <li key={item.id}>
                   <Button
-                    variant="ghost"
-                    className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''}`}
+
+                    className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''} hover:bg-accent hover:text-accent-foreground`}
                     onClick={() => setActiveTab(item.id)}
                   >
                     {item.icon}
