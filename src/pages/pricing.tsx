@@ -1,7 +1,16 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Check, Bitcoin, DollarSign } from "lucide-react"
 import TopMenu from "../components/menu/TopMenu";
+import { useNavigate } from "react-router-dom";
+import Footer from "../components/footer/Footer";
 export default function Pricing() {
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/signup");
+  };
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden w-screen">
       {/* Animated background */}
@@ -40,9 +49,11 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $2,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $19,999</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
-                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
+                <Button 
+                onClick={handleClick}
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -55,9 +66,11 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $20,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $99,999</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
-                <Button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
+                <Button 
+                onClick={handleClick}
+                className="w-full bg-cyan-500 hover:bg-cyan-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -70,9 +83,11 @@ export default function Pricing() {
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 5% First time deposit bonus</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Min investment: $100,000</li>
                   <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> Max investment: $500,000</li>
-                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawals</li>
+                  <li className="flex items-center"><Check className="h-5 w-5 text-green-400 mr-2" /> 24/7 Withdrawal</li>
                 </ul>
-                <Button className="w-full bg-teal-500 hover:bg-teal-600 text-white">
+                <Button
+                onClick={handleClick}
+                className="w-full bg-teal-500 hover:bg-teal-600 text-white">
                   Get Started <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </div>
@@ -117,7 +132,7 @@ export default function Pricing() {
           </div>
         </section>
 
-        {/* Footer (you can reuse the footer from the main page) */}
+        <Footer />
       </div>
     </div>
   )

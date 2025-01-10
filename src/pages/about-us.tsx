@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Bitcoin, Zap, Globe, Target, Rocket } from "lucide-react"
 import vision from "../assets/images/vision.jpg";
 import TopMenu from "../components/menu/TopMenu";
-
+import Footer from "../components/footer/Footer";
 export default function AboutUs() {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -102,7 +102,7 @@ export default function AboutUs() {
           </div>
         </section>
 
-        {/* Footer (you can reuse the footer from the main page) */}
+        <Footer />
       </div>
     </div>
   )

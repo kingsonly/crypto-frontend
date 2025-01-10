@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Bitcoin, DollarSign, ArrowUpRight, ArrowDownRight, Wallet, RefreshCw, History, Package, User } from "lucide-react"
 import DepositTab from '@/components/dashboard/DespositTab'
@@ -12,9 +12,30 @@ import InvestmentHistoryTab from '@/components/dashboard/InvestmentHistoryTab'
 import EarningsTab from '@/components/dashboard/EarningsTab'
 import ProfileTab from '@/components/dashboard/ProfileTab'
 import DashboardTab from '@/components/dashboard/DashboardTab'
+import { devNull } from 'os'
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard')
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [token, setToken] = useState(false);
+  const [file, setFile] = useState<string>("");
+
+  useEffect(() => {
+    let getToken: any = JSON.parse(localStorage.getItem('user'));
+    if (getToken && getToken.token) {
+      // console.log('message',getToken)
+      setToken(getToken.token)
+      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+
+      if (getToken.is_admin == 1) {
+        setFile("Users");
+      } else {
+        setFile("Profile");
+      }
+    }
+  }, [])
+
+
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -66,17 +87,18 @@ export default function AdminDashboard() {
                 { name: 'Dashboard', icon: <Wallet className="h-5 w-5" />, id: 'dashboard' },
                 { name: 'Deposit', icon: <ArrowDownRight className="h-5 w-5" />, id: 'deposit' },
                 { name: 'Withdraw', icon: <ArrowUpRight className="h-5 w-5" />, id: 'withdraw' },
-                { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
+                // { name: 'P2P Transfer', icon: <RefreshCw className="h-5 w-5" />, id: 'transfer' },
                 { name: 'Transactions', icon: <History className="h-5 w-5" />, id: 'transactions' },
-                { name: 'Packages', icon: <Package className="h-5 w-5" />, id: 'packages' },
+                { name: 'Invest', icon: <Package className="h-5 w-5" />, id: 'packages' },
                 { name: 'Investment History', icon: <History className="h-5 w-5" />, id: 'investment-history' },
                 { name: 'Earnings', icon: <DollarSign className="h-5 w-5" />, id: 'earnings' },
-                { name: 'Profile', icon: <User className="h-5 w-5" />, id: 'profile' },
+                { name: file, icon: <User className="h-5 w-5" />, id: 'profile' },
               ].map((item) => (
+
                 <li key={item.id}>
                   <Button
 
-                    className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''} hover:bg-accent hover:text-accent-foreground`}
+                    className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''}  hover:bg-accent hover:text-accent-foreground`}
                     onClick={() => setActiveTab(item.id)}
                   >
                     {item.icon}

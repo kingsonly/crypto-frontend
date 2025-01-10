@@ -13,7 +13,7 @@ import {
   Droplet,
   Navigation,
 } from "lucide-react";
-import Footer from "@/components/ui/footer";
+import Footer from "../components/footer/Footer";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/ui/Navbar";
 import TopMenu from "../components/menu/TopMenu";
@@ -21,6 +21,17 @@ import TopMenu from "../components/menu/TopMenu";
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
   const navigate = useNavigate(); // Initialize the useNavigate hook
+   
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    console.log("done", params.get("ref"))
+    const referralCode = params.get('ref');
+    
+    if (referralCode) {
+      localStorage.setItem('ref', referralCode); // Save referral code for later
+      navigate('/signup');
+    }
+  }, []);
 
   const handleClick = () => {
     navigate("/signup");
