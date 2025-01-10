@@ -21,7 +21,7 @@ export default function AdminDashboard() {
   const [file, setFile] = useState<string>("");
 
   useEffect(() => {
-    let getToken:any = JSON.parse(localStorage.getItem('user'));
+    let getToken: any = JSON.parse(localStorage.getItem('user'));
     if (getToken && getToken.token) {
       // console.log('message',getToken)
       setToken(getToken.token)
@@ -33,9 +33,9 @@ export default function AdminDashboard() {
         setFile("Profile");
       }
     }
-  },[])
+  }, [])
 
-  
+
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -94,10 +94,10 @@ export default function AdminDashboard() {
                 { name: 'Earnings', icon: <DollarSign className="h-5 w-5" />, id: 'earnings' },
                 { name: file, icon: <User className="h-5 w-5" />, id: 'profile' },
               ].map((item) => (
-                
+
                 <li key={item.id}>
                   <Button
-                  
+
                     className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''}  hover:bg-accent hover:text-accent-foreground`}
                     onClick={() => setActiveTab(item.id)}
                   >
