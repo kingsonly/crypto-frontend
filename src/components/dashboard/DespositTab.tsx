@@ -19,9 +19,8 @@ function Notification({
 }) {
   return (
     <div
-      className={`p-3 rounded-lg mb-4 text-sm ${
-        type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
-      }`}
+      className={`p-3 rounded-lg mb-4 text-sm ${type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+        }`}
     >
       {message}
     </div>
@@ -47,6 +46,7 @@ export default function DepositTab() {
   const [newDeposit, setNewDeposit] = useState();
   const [allDeposit, setAllDeposit] = useState([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [loadDeposit, setLoadDeposit] = useState(false);
 
   const [notification, setNotification] = useState<{
     message: string;
@@ -76,6 +76,7 @@ export default function DepositTab() {
   };
   const getDeposits = async () => {
     let getToken: any = JSON.parse(localStorage.getItem("user"));
+    setLoadDeposit(true);
     await axios
       .post(
         `${baseUrl}/transaction`,
@@ -90,13 +91,16 @@ export default function DepositTab() {
       .then((response) => {
         // console.log(response.data)
         // console.log(response.data)
+        setLoadDeposit(false);
         if (response.data.status === "success") {
           setDeposits(response.data.data);
         }
         console.log("allDeposit:", response.data);
         console.log("allDeposit:", response.data);
       })
-      .catch((error) => {});
+      .catch((error) => {
+        setLoadDeposit(false);
+      });
   };
   const openModal = (crypto: CryptoType) => {
     setSelectedCrypto(crypto);
@@ -395,47 +399,48 @@ export default function DepositTab() {
       </h2> */}
       {!isAdmin && (
         <div className="overflow-x-auto bg-gray-800 border-gray-700 rounded-lg shadow-lg">
-          <table className="min-w-full table-auto text-sm text-gray-200">
-            <thead className="bg-gray-700">
-              <tr>
-                <th className="px-4 py-2 text-left">SN</th>
-                <th className="px-4 py-2 text-left">Amount</th>
-                <th className="px-4 py-2 text-left">Method</th>
-                <th className="px-4 py-2 text-left">Status</th>
-                <th className="px-4 py-2 text-left">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {deposits.map((deposit, index) => (
-                <tr key={deposit.id} className="border-t border-gray-700">
-                  <td className="px-4 py-2">{index + 1}</td>
-                  <td className="px-4 py-2">{deposit.amount}</td>
-                  <td className="px-4 py-2">{deposit.method}</td>
-
-                  <td
-                    className={`px-4 py-2 ${
-                      deposit.status === 1 ? "text-green-500" : "text-red-500"
-                    }`}
-                  >
-                    {deposit.status === 1 ? "Confirmed" : "pending"}
-                  </td>
-                  <td className="px-4 py-2">
-                    {deposit.status === 0 && (
-                      <Button
-                        onClick={() => handleViewDeposit(deposit)}
-                        // onClick={() => handleConfirmPayment()}
-                        // onClick={() => handleConfirmPayment(deposit)}
-                        // onClick={handleConfirmPayment}
-                        className="bg-blue-600 hover:bg-blue-500 text-white"
-                      >
-                        View
-                      </Button>
-                    )}
-                  </td>
+          {loadDeposit ? "Loading..." : (
+            <table className="min-w-full table-auto text-sm text-gray-200">
+              <thead className="bg-gray-700">
+                <tr>
+                  <th className="px-4 py-2 text-left">SN</th>
+                  <th className="px-4 py-2 text-left">Amount</th>
+                  <th className="px-4 py-2 text-left">Method</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                  <th className="px-4 py-2 text-left">Action</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {deposits.map((deposit, index) => (
+                  <tr key={deposit.id} className="border-t border-gray-700">
+                    <td className="px-4 py-2">{index + 1}</td>
+                    <td className="px-4 py-2">{deposit.amount}</td>
+                    <td className="px-4 py-2">{deposit.method}</td>
+
+                    <td
+                      className={`px-4 py-2 ${deposit.status === 1 ? "text-green-500" : "text-red-500"
+                        }`}
+                    >
+                      {deposit.status === 1 ? "Confirmed" : "pending"}
+                    </td>
+                    <td className="px-4 py-2">
+                      {deposit.status === 0 && (
+                        <Button
+                          onClick={() => handleViewDeposit(deposit)}
+                          // onClick={() => handleConfirmPayment()}
+                          // onClick={() => handleConfirmPayment(deposit)}
+                          // onClick={handleConfirmPayment}
+                          className="bg-blue-600 hover:bg-blue-500 text-white"
+                        >
+                          View
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       )}
 
@@ -452,59 +457,59 @@ export default function DepositTab() {
             />
           )}
 
-          <div className="overflow-x-auto bg-gray-800 border-gray-700 rounded-lg shadow-lg">
-            <table className="min-w-full table-auto text-sm text-gray-200">
-              <thead className="bg-gray-700">
-                <tr>
-                  <th className="px-4 py-2 text-left">SN</th>
-                  <th className="px-4 py-2 text-left">User</th>
-                  <th className="px-4 py-2 text-left">Amount</th>
-                  <th className="px-4 py-2 text-left">Method</th>
-                  <th className="px-4 py-2 text-left">Status</th>
-                  <th className="px-4 py-2 text-left">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deposits.map((deposit, index) => (
-                  <tr key={deposit.id} className="border-t border-gray-700">
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">
-                      {deposit.user && deposit.user.name}
-                    </td>
-                    <td className="px-4 py-2">{deposit.amount}</td>
-                    <td className="px-4 py-2">{deposit.method}</td>
-
-                    <td
-                      className={`px-4 py-2 ${
-                        deposit.status === 1 ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
-                      {deposit.status === 1 ? "Confirmed" : "pending"}
-                    </td>
-                    <td
-                      className={`px-4 py-2 ${
-                        deposit.status === 1 ? "text-green-500" : "text-red-500"
-                      }`}
-                    >
-                      {deposit.status === 0 && (
-                        <Button
-                          onClick={() => approveDeposit(deposit.id)}
-                          // onClick={() => handleConfirmPayment()}
-                          // onClick={() => handleConfirmPayment(deposit)}
-                          // onClick={handleConfirmPayment}
-                          className="bg-blue-600 hover:bg-blue-500 text-white"
-                        >
-                          {indexLoading == deposit.id
-                            ? "Processing..."
-                            : "Approve"}
-                        </Button>
-                      )}
-                      {deposit.status === 1 && <span>Approved</span>}
-                    </td>
+          <div className={`overflow-x-auto bg-gray-800 border-gray-700 rounded-lg shadow-lg ${loadDeposit ? 'p-4' : 'p-2'}`}>
+            {loadDeposit ? "Loading..." : (
+              <table className="min-w-full table-auto text-sm text-gray-200">
+                <thead className="bg-gray-700">
+                  <tr>
+                    <th className="px-4 py-2 text-left">SN</th>
+                    <th className="px-4 py-2 text-left">User</th>
+                    <th className="px-4 py-2 text-left">Amount</th>
+                    <th className="px-4 py-2 text-left">Method</th>
+                    <th className="px-4 py-2 text-left">Status</th>
+                    <th className="px-4 py-2 text-left">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {deposits.map((deposit, index) => (
+                    <tr key={deposit.id} className="border-t border-gray-700">
+                      <td className="px-4 py-2">{index + 1}</td>
+                      <td className="px-4 py-2">{deposit.user && deposit.user.name}</td>
+                      <td className="px-4 py-2">{deposit.amount}</td>
+                      <td className="px-4 py-2">{deposit.method}</td>
+
+                      <td
+                        className={`px-4 py-2 ${deposit.status === 1
+                          ? "text-green-500"
+                          : "text-red-500"
+                          }`}
+                      >
+                        {deposit.status === 1 ? 'Confirmed' : 'pending'}
+                      </td>
+                      <td className={`px-4 py-2 ${deposit.status === 1
+                        ? "text-green-500"
+                        : "text-red-500"
+                        }`}>
+                        {deposit.status === 0 && (
+                          <Button
+                            onClick={() => approveDeposit(deposit.id)}
+                            // onClick={() => handleConfirmPayment()}
+                            // onClick={() => handleConfirmPayment(deposit)}
+                            // onClick={handleConfirmPayment}
+                            className="bg-blue-600 hover:bg-blue-500 text-white"
+                          >
+                            {indexLoading == deposit.id ? "Processing..." : "Approve"}
+                          </Button>
+                        )}
+                        {deposit.status === 1 && (
+                          <span>Approved</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
         </div>
       )}

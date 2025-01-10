@@ -74,7 +74,7 @@ export default function TransactionsTab() {
         <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
           Investment History
         </h2>
-        <Card className="bg-gray-800 border-gray-700">
+        <Card className="bg-gray-800 border-gray-700 text-white">
           <CardHeader>
             <CardTitle>Your Transactions</CardTitle>
             <CardDescription>
@@ -111,8 +111,8 @@ export default function TransactionsTab() {
 
       <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-          <CardDescription>Your latest account activities.</CardDescription>
+          <CardTitle className="text-white">Recent Transactions</CardTitle>
+          <CardDescription className="text-white">Your latest account activities.</CardDescription>
         </CardHeader>
         <CardContent>
           <table className="w-full text-white">
@@ -131,20 +131,18 @@ export default function TransactionsTab() {
                   <td className="py-4">{tx.user && tx.user.name}</td>
                   <td className="py-4">{tx.type}</td>
                   <td
-                    className={`py-4 ${
-                      tx.group == "credit" ? "text-green-400" : "text-red-400"
-                    }`}
+                    className={`py-4 ${tx.group == "credit" ? "text-green-400" : "text-red-400"
+                      }`}
                   >
                     {tx.group === "credit" ? `+${tx.amount}` : `-${tx.amount}`}
                   </td>
                   <td className="py-4">{convertToDateFormat(tx.date)}</td>
                   <td className="py-4">
                     <span
-                      className={`px-2 py-1 rounded-full text-xs ${
-                        tx.status == "1"
-                          ? "bg-green-900 text-green-300"
-                          : "bg-blue-900 text-blue-300"
-                      }`}
+                      className={`px-2 py-1 rounded-full text-xs ${tx.status == "1"
+                        ? "bg-green-900 text-green-300"
+                        : "bg-blue-900 text-blue-300"
+                        }`}
                     >
                       {tx.status == "1" ? "Completed" : "Pending"}
                     </span>

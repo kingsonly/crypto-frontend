@@ -47,19 +47,19 @@ export default function InvestmentHistoryTab() {
     if (loading) {
       return (
         <tr>
-          <td colspan='6'>loading...</td>
+          <td colspan='6'>Loading...</td>
         </tr>
       );
     }
-    if(investments.length < 1) {
+    if (investments.length < 1) {
       return (
         <tr>
           <td colspan='6'>You have no investment history.</td>
         </tr>
       );
     }
-    return(
-        
+    return (
+
       investments.map((inv) => {
         return (
           <tr key={inv.id} className="border-t border-gray-700">
@@ -71,11 +71,10 @@ export default function InvestmentHistoryTab() {
             {/* Display the formatted start date */}
             <td className="py-4">
               <span
-                className={`px-2 py-1 rounded-full text-xs ${
-                  inv.investment.status == "1"
+                className={`px-2 py-1 rounded-full text-xs ${inv.investment.status == "1"
                     ? "bg-green-900 text-green-300"
                     : "bg-blue-900 text-blue-300"
-                }`}
+                  }`}
               >
                 {inv.investment.status == "1" ? "Completed" : "in progress"}
               </span>
@@ -84,18 +83,18 @@ export default function InvestmentHistoryTab() {
           </tr>
         );
       })
-    
+
     )
-    
+
   };
 
- 
+
   return (
     <div className="space-y-8 text-white">
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
         Investment History
       </h2>
-      <Card className="bg-gray-800 border-gray-700">
+      <Card className="bg-gray-800 border-gray-700 text-white">
         <CardHeader>
           <CardTitle>Your Investments</CardTitle>
           <CardDescription>
