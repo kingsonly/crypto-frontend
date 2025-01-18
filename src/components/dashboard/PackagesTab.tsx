@@ -14,7 +14,7 @@ interface Investment {
   minimum_amount: number;
   maximum_amount: number;
   duration: string;
-  monthlyProfit: number;
+  rate: number;
 }
 
 function Notification({
@@ -26,11 +26,10 @@ function Notification({
 }) {
   return (
     <div
-      className={`p-3 rounded-lg mb-4 text-sm ${
-        type === "success"
-          ? "bg-green-600 text-white"
-          : "bg-red-600 text-white"
-      }`}
+      className={`p-3 rounded-lg mb-4 text-sm ${type === "success"
+        ? "bg-green-600 text-white"
+        : "bg-red-600 text-white"
+        }`}
     >
       {message}
     </div>
@@ -42,10 +41,10 @@ export default function PackagesTab() {
   const [loading, setLoading] = useState<boolean>(true);
   const [newLoading, setNewLoading] = useState<boolean>(false);
   const [investButtonLoading, setInvestButtonLoading] = useState<boolean>(false);
-  const [token, setToken] = useState<string>(""); 
+  const [token, setToken] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
   const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null);
-  const [investmentAmount, setInvestmentAmount] = useState<number | string>(""); 
+  const [investmentAmount, setInvestmentAmount] = useState<number | string>("");
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -70,7 +69,7 @@ export default function PackagesTab() {
     name: setName,
     minimumAmount: setMinimumAmount,
     maximumAmount: setMaximumAmount,
-    interestRate: setInterestRate,
+    rate: setInterestRate,
     duration: setDuration,
   };
 
@@ -81,7 +80,7 @@ export default function PackagesTab() {
       setToken(getToken.token);
       fetchInvestments(getToken.token);
       setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
-      
+
     } else {
       navigate("/login");
     }
@@ -105,7 +104,7 @@ export default function PackagesTab() {
           minimum_amount: inv.minimum_amount,
           maximum_amount: inv.maximum_amount,
           duration: inv.duration,
-          monthlyProfit: inv.monthlyProfit || 0,
+          rate: inv.interest_rate || 0,
         }));
 
         setInvestments(filteredInvestments);
@@ -120,9 +119,11 @@ export default function PackagesTab() {
   };
 
   const createPackage = async (e: React.FormEvent) => {
+
     e.preventDefault();
 
     setNewLoading(true)
+
 
     if (name == "") {
       setNotification({
@@ -174,51 +175,53 @@ export default function PackagesTab() {
       return;
     }
 
-    let data:any = {
+    let data: any = {
       name: name,
       minimum_amount: minimumAmount,
       maximum_amount: maximumAmount,
       interest_rate: interestRate,
       duration: duration,
     }
-    
+
     setNotification(null);
     await axios.post(
-      `${ baseUrl }/package/create`, 
+      `${baseUrl}/package/create`,
       data,
-     { headers: {
-        Authorization: `Bearer ${token}`, // Include Bearer token in headers
-        'Content-Type': 'application/json', // Optional, specify content type
-      }},
-      )
-    .then(function (response:any) {
-      if(response.data.status === "success")
-      alert("Package Created Successfully")
-      setFullNotification({
-        message: "Package Created Successfully",
-        type: "success",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        }
+      },
+    )
+      .then(function (response: any) {
+        if (response.data.status === "success")
+          alert("Package Created Successfully")
+        setFullNotification({
+          message: "Package Created Successfully",
+          type: "success",
+        })
+        fetchInvestments(token);
+        setNewLoading(false)
       })
-      fetchInvestments(token);
-      setNewLoading(false)
-    })
-    .catch((error:any) => {
-      alert("somthing went wrong ")
-      console.error("Error creating withdrwal request:", error);
-      setFullNotification({
-        message: "Something went wrong, couldn't create package",
-        type: "success",
+      .catch((error: any) => {
+        alert("somthing went wrong ")
+        console.error("Error creating withdrwal request:", error);
+        setFullNotification({
+          message: "Something went wrong, couldn't create package",
+          type: "success",
+        })
+        setNewLoading(false)
       })
-      setNewLoading(false)
-    })
-    .finally(() => {
-      setFullNotification(null);
-      setName("")
-      setMaximumAmount(null)
-      setMinimumAmount(null)
-      setInterestRate(null)
-      setDuration(null)
-      setNewLoading(false)
-    })
+      .finally(() => {
+        setFullNotification(null);
+        setName("")
+        setMaximumAmount(null)
+        setMinimumAmount(null)
+        setInterestRate(null)
+        setDuration(null)
+        setNewLoading(false)
+      })
   }
 
   const handleInvestNow = (inv: Investment) => {
@@ -266,7 +269,7 @@ export default function PackagesTab() {
             },
           }
         );
-        
+
         if (response.data.status === "success") {
           setSuccessMessage(response.data.message || "Investment successful!");
           setError(null);
@@ -293,7 +296,7 @@ export default function PackagesTab() {
 
   const handleInput = (e, stateSetters) => {
     const { name, value } = e.target;
-  
+
     if (stateSetters[name]) {
       stateSetters[name](value); // Call the appropriate state setter with the new value
     } else {
@@ -332,112 +335,112 @@ export default function PackagesTab() {
 
   return (
 
-   
+
     <div className="space-y-8 text-white">
 
-    {fullNotification && (
-      <Notification
-        message={fullNotification.message}
-        type={fullNotification.type}
-      />
-    )}
+      {fullNotification && (
+        <Notification
+          message={fullNotification.message}
+          type={fullNotification.type}
+        />
+      )}
 
-    {isAdmin && (
-      <div>
-        <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 mb-4">
-          Create A New Investment Package
-        </h2>
-        <Card className="bg-gray-800 border-gray-700 text-color-white">
-          <CardHeader>
-            <CardTitle>Create A New Package</CardTitle>
-            <CardDescription>
-              Enter Pakage details
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-          {notification && (
-            <Notification
-              message={notification.message}
-              type={notification.type}
-            />
-          )}
-            <form className="space-y-4" onSubmit={createPackage}>
-              {/* Name Input */}
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Enter Package Name"
-                  name="name"
-            value={name}
-            onChange={(e) => handleInput(e, stateSetters)}
-                  className="bg-gray-700 border-gray-600"
+      {isAdmin && (
+        <div>
+          <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400 mb-4">
+            Create A New Investment Package
+          </h2>
+          <Card className="bg-gray-800 border-gray-700 text-color-white">
+            <CardHeader>
+              <CardTitle>Create A New Package</CardTitle>
+              <CardDescription>
+                Enter Pakage details
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {notification && (
+                <Notification
+                  message={notification.message}
+                  type={notification.type}
                 />
-              </div>
+              )}
+              <form className="space-y-4" onSubmit={createPackage}>
+                {/* Name Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Enter Package Name"
+                    name="name"
+                    value={name}
+                    onChange={(e) => handleInput(e, stateSetters)}
+                    className="bg-gray-700 border-gray-600"
+                  />
+                </div>
 
-              {/* Minimum Amount Input */}
-              <div className="space-y-2">
-                <Label htmlFor="minimumAmount">Minimum Amount</Label>
-                <Input
-                  id="minimumAmount"
-                  type="number"
-                  name="minimumAmount"
-            value={minimumAmount}
-            onChange={(e) => handleInput(e, stateSetters)}
-                  placeholder="Enter Minimum Amount"
-                  className="bg-gray-700 border-gray-600"
-                />
-              </div>
+                {/* Minimum Amount Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="minimumAmount">Minimum Amount ($)</Label>
+                  <Input
+                    id="minimumAmount"
+                    type="number"
+                    name="minimumAmount"
+                    value={minimumAmount}
+                    onChange={(e) => handleInput(e, stateSetters)}
+                    placeholder="Enter Minimum Amount"
+                    className="bg-gray-700 border-gray-600"
+                  />
+                </div>
 
-              {/* Maximum Amount Input */}
-              <div className="space-y-2">
-                <Label htmlFor="maximumAmount">Maximum Amount</Label>
-                <Input
-                  id="maximumAmount"
-                  type="number"
-                  name="maximumAmount"
-            value={maximumAmount}
-            onChange={(e) => handleInput(e, stateSetters)}
-                  placeholder="Enter Maximum Amount"
-                  className="bg-gray-700 border-gray-600"
-                />
-              </div> 
+                {/* Maximum Amount Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="maximumAmount">Maximum Amount ($)</Label>
+                  <Input
+                    id="maximumAmount"
+                    type="number"
+                    name="maximumAmount"
+                    value={maximumAmount}
+                    onChange={(e) => handleInput(e, stateSetters)}
+                    placeholder="Enter Maximum Amount"
+                    className="bg-gray-700 border-gray-600"
+                  />
+                </div>
 
-              {/* Interest Rate Input */}
-              <div className="space-y-2">
-                <Label htmlFor="interestRate">Interest Rate</Label>
-                <Input
-                  id="interestRate"
-                  type="number"
-                  name="interestRate"
-            value={interestRate}
-            onChange={(e) => handleInput(e, stateSetters)}
-                  placeholder="Enter Interest Rate"
-                  className="bg-gray-700 border-gray-600"
-                />
-              </div> 
+                {/* Interest Rate Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="interestRate">Interest Rate (%)</Label>
+                  <Input
+                    id="interestRate"
+                    type="number"
+                    name="rate"
+                    value={interestRate}
+                    onChange={(e) => handleInput(e, stateSetters)}
+                    placeholder="Enter Interest Rate"
+                    className="bg-gray-700 border-gray-600"
+                  />
+                </div>
 
-              {/* Maximum Amount Input */}
-              <div className="space-y-2">
-                <Label htmlFor="duration">Duration</Label>
-                <Input
-                  id="duration"
-                  type="number"
-                  name="duration"
-            value={duration}
-            onChange={(e) => handleInput(e, stateSetters)}
-                  placeholder="Enter duration"
-                  className="bg-gray-700 border-gray-600"
-                />
-              </div> 
-              
-              <Button  type="submit" className="w-full">{newLoading ? "Processing..." : "Create Package"}</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    )}
+                {/* Maximum Amount Input */}
+                <div className="space-y-2">
+                  <Label htmlFor="duration">Duration (Days)</Label>
+                  <Input
+                    id="duration"
+                    type="number"
+                    name="duration"
+                    value={duration}
+                    onChange={(e) => handleInput(e, stateSetters)}
+                    placeholder="Enter duration"
+                    className="bg-gray-700 border-gray-600"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full">{newLoading ? "Processing..." : "Create Package"}</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
         Investment Packages
@@ -452,8 +455,8 @@ export default function PackagesTab() {
               <ul className="space-y-2">
                 <li>Minimum Amount: ${inv.minimum_amount}</li>
                 <li>Maximum Amount: ${inv.maximum_amount}</li>
-                <li>Duration: {inv.duration}</li>
-                <li>Monthly Profit: ${inv.monthlyProfit}</li>
+                <li>Duration: {inv.duration} days</li>
+                <li>Monthly Profit: ${inv.rate} %</li>
               </ul>
               {!isAdmin && (
                 <Button className="w-full mt-4" onClick={() => handleInvestNow(inv)}>

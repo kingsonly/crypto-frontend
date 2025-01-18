@@ -63,23 +63,23 @@ export default function InvestmentHistoryTab() {
       investments.map((inv) => {
         return (
           <tr key={inv.id} className="border-t border-gray-700">
-            <td className="py-4">{inv.user && inv.user.name}</td>{" "}
-            <td className="py-4">{inv.investment.package}</td>{" "}
+            <td className="px-8 py-2 text-left">{inv.user && inv.user.name}</td>{" "}
+            <td className="px-8 py-2 text-left">{inv.investment.package}</td>{" "}
             {/* Display Package ID or name */}
-            <td className="py-4">{inv.investment.amount}</td>
-            <td className="py-4">{inv.investment.start_date}</td>{" "}
+            <td className="px-8 py-2 text-left">{inv.investment.amount}</td>
+            <td className="px-8 py-2 text-left">{inv.investment.start_date}</td>{" "}
             {/* Display the formatted start date */}
-            <td className="py-4">
+            <td className="px-8 py-2 text-left">
               <span
                 className={`px-2 py-1 rounded-full text-xs ${inv.investment.status == "1"
-                    ? "bg-green-900 text-green-300"
-                    : "bg-blue-900 text-blue-300"
+                  ? "bg-green-900 text-green-300"
+                  : "bg-blue-900 text-blue-300"
                   }`}
               >
                 {inv.investment.status == "1" ? "Completed" : "in progress"}
               </span>
             </td>
-            <td className="py-4">{inv.investment.earning_sum}</td>
+            <td className="px-8 py-2 text-left">{inv.investment.earning_sum}</td>
           </tr>
         );
       })
@@ -101,16 +101,16 @@ export default function InvestmentHistoryTab() {
             Track the performance of your investments.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <table className="w-full text-white">
+        <CardContent className="overflow-x-auto">
+          <table className=" min-w-full table-auto text-white">
             <thead>
               <tr className="text-left text-gray-400">
-                <th className="pb-4">User</th>
-                <th className="pb-4">Package</th>
-                <th className="pb-4">Amount</th>
-                <th className="pb-4">Date</th> {/* Display Start Date */}
-                <th className="pb-4">Status</th>
-                <th className="pb-4">Earning</th>
+                <th className="px-8 py-2 text-left">User</th>
+                <th className="px-8 py-2 text-left">Package</th>
+                <th className="px-8 py-2 text-left">Amount</th>
+                <th className="px-8 py-2 text-left">Date</th> {/* Display Start Date */}
+                <th className="px-8 py-2 text-left">Status</th>
+                <th className="px-8 py-2 text-left">Earning</th>
               </tr>
             </thead>
             <tbody>

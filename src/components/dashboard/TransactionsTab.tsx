@@ -114,30 +114,30 @@ export default function TransactionsTab() {
           <CardTitle className="text-white">Recent Transactions</CardTitle>
           <CardDescription className="text-white">Your latest account activities.</CardDescription>
         </CardHeader>
-        <CardContent>
-          <table className="w-full text-white">
+        <CardContent className="overflow-x-auto">
+          <table className="min-w-full table-auto text-white">
             <thead>
               <tr className="text-left text-gray-400">
-                <th className="pb-4">User</th>
-                <th className="pb-4">Type</th>
-                <th className="pb-4">Amount</th>
-                <th className="pb-4">Date</th>
-                <th className="pb-4">Status</th>
+                <th className="px-8 py-2">User</th>
+                <th className="px-8 py-2">Type</th>
+                <th className="px-8 py-2">Amount</th>
+                <th className="px-8 py-2">Date</th>
+                <th className="px-8 py-2">Status</th>
               </tr>
             </thead>
             <tbody>
               {filteredTransactions.map((tx) => (
                 <tr key={tx.id} className="border-t border-gray-700">
-                  <td className="py-4">{tx.user && tx.user.name}</td>
-                  <td className="py-4">{tx.type}</td>
+                  <td className="px-8 py-2">{tx.user && tx.user.name}</td>
+                  <td className="px-8 py-2">{tx.type}</td>
                   <td
-                    className={`py-4 ${tx.group == "credit" ? "text-green-400" : "text-red-400"
+                    className={`px-8 py-2 ${tx.group == "credit" ? "text-green-400" : "text-red-400"
                       }`}
                   >
                     {tx.group === "credit" ? `+${tx.amount}` : `-${tx.amount}`}
                   </td>
-                  <td className="py-4">{convertToDateFormat(tx.date)}</td>
-                  <td className="py-4">
+                  <td className="px-8 py-2">{convertToDateFormat(tx.date)}</td>
+                  <td className="px-8 py-2">
                     <span
                       className={`px-2 py-1 rounded-full text-xs ${tx.status == "1"
                         ? "bg-green-900 text-green-300"

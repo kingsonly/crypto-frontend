@@ -301,27 +301,27 @@ export default function ProfileTab() {
             <CardHeader>
               <CardTitle style={{ color: 'white' }}>All Users</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="overflow-x-auto">
               {loadUser ? "Loading..." : (
                 <>
-                  <table className="w-full">
+                  <table className="min-w-full table-auto">
                     <thead>
                       <tr className="text-left text-gray-400">
-                        <th className="pb-4">SN</th>
-                        <th className="pb-4">Name</th>
-                        <th className="pb-4">Username</th>
-                        <th className="pb-4">Email</th>
-                        <th className="pb-4">Role</th>
+                        <th className="px-8 py-2">SN</th>
+                        <th className="px-8 py-2">Name</th>
+                        <th className="px-8 py-2">Username</th>
+                        <th className="px-8 py-2">Email</th>
+                        <th className="px-8 py-2">Role</th>
                         {/* <th className="pb-4">Date</th> */}
                       </tr>
                     </thead>
                     <tbody>
                       {users.map((user, i) => <tr key={user.id} className="border-t border-gray-700">
-                        <td className="py-4 text-white">{i + 1}</td>
-                        <td className="py-4 text-white">{user.name != null ? user.name : "NULL"}</td>
-                        <td className="py-4 text-white">{user.username != null ? user.username : "NULL"}</td>
-                        <td className="py-4 text-white">{user.email != null ? user.email : "NULL"}</td>
-                        <td className="py-4 text-white">
+                        <td className="px-8 py-2 text-white">{i + 1}</td>
+                        <td className="px-8 py-2 text-white">{user.name != null ? user.name : "NULL"}</td>
+                        <td className="px-8 py-2 text-white">{user.username != null ? user.username : "NULL"}</td>
+                        <td className="px-8 py-2 text-white">{user.email != null ? user.email : "NULL"}</td>
+                        <td className="px-8 py-2 text-white">
                           <span className={`px-2 py-1 rounded-full text-xs ${user.is_admin === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
                             }`}>
                             {user.is_admin === 1 ? 'Admin' : 'User'}
