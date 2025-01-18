@@ -41,7 +41,7 @@ export default function EarningsTab() {
         setEarningsBreakdown(earnings); // Set breakdown
       }
     } catch (error: any) {
-      
+
     } finally {
       setLoading(false);
     }
@@ -70,27 +70,27 @@ export default function EarningsTab() {
         <CardHeader>
           <CardTitle>Earnings Breakdown</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto">
           {loading ? (
             <p>Loading...</p>
           ) : earningsBreakdown.length > 0 ? (
-            <table className="w-full text-white">
+            <table className="min-w-full table-auto text-white">
               <thead>
                 <tr className="text-left text-gray-400">
-                  <th className="pb-4">SN</th>
-                  <th className="pb-4">User</th>
-                  <th className="pb-4">Amount</th>
-                  <th className="pb-4">Date</th>
+                  <th className="px-8 py-2 text-left">SN</th>
+                  <th className="px-8 py-2 text-left">User</th>
+                  <th className="px-8 py-2 text-left">Amount</th>
+                  <th className="px-8 py-2 text-left">Date</th>
                 </tr>
               </thead>
               <tbody>
                 {earningsBreakdown.map((inv: any, index) => (
                   <tr key={inv.id} className="border-t border-gray-700">
-                    <td className="py-4">{index+1}</td>
-                    <td className="py-4">{inv.user && inv.user.name}</td>
-                    <td className="py-4 text-green-400">+${inv.earning.amount}</td>
-                    <td className="py-4 text-green-400">
-                    {new Date(inv.earning.created_at).toISOString().split("T")[0]}
+                    <td className="px-8 py-2 text-left">{index + 1}</td>
+                    <td className="px-8 py-2 text-left">{inv.user && inv.user.name}</td>
+                    <td className="px-8 py-2 text-left text-green-400">+${inv.earning.amount}</td>
+                    <td className="px-8 py-2 text-left text-green-400">
+                      {new Date(inv.earning.created_at).toISOString().split("T")[0]}
                     </td>
                   </tr>
                 ))}

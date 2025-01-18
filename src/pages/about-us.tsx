@@ -3,7 +3,12 @@ import { ArrowRight, Bitcoin, Zap, Globe, Target, Rocket } from "lucide-react"
 import vision from "../assets/images/vision.jpg";
 import TopMenu from "../components/menu/TopMenu";
 import Footer from "../components/footer/Footer";
+import { useNavigate } from "react-router-dom";
 export default function AboutUs() {
+  const navigate = useNavigate();
+  const signupNavigation = () => {
+    navigate("/signup");
+  };
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Animated background */}
@@ -96,7 +101,7 @@ export default function AboutUs() {
             <p className="text-xl mb-8 text-gray-300">
               Be part of the future of finance and energy. Invest in Coinshares Mining today and unlock the potential of Bitcoin.
             </p>
-            <Button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+            <Button onClick={signupNavigation} className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black hover:from-yellow-500 hover:to-yellow-700 text-lg py-6 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
               Invest Now <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>

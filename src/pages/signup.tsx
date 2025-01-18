@@ -99,32 +99,32 @@ export default function Signup() {
       setIsLoading(false); // Stop loading if there are errors
       return
     }
-     
+
     // Here you would typically handle the signup logic
     // setSuccess(true)
     let ref = localStorage.getItem('ref')
 
-   
-      
+
+
 
     let data: any = {
       name: name,
       username: username,
       email: email,
       password: password,
-     
-     
+
+
     }
 
-    if(ref != null) {
+    if (ref != null) {
       data["ref"] = ref
- }
-    await axios.post(`${ baseUrl }/signup`, data)
+    }
+    await axios.post(`${baseUrl}/signup`, data)
       .then(function (response) {
         console.log('API Response:', response.data);  // Log the full response to inspect its structure
 
         if (response.data.status === 'success') {
-       
+
           setSuccess(true);
           setErrorMessages([]);  // Clear errors if successful
         } else {
@@ -308,23 +308,23 @@ export default function Signup() {
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-gray-300">Password</Label>
                 <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onFocus={() => handleFocus('password')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
-                    }`}
-                />
+                  <Input
+                    id="password"
+                    type={showPassword ? 'text' : 'password'}
+                    placeholder="Create a password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => handleFocus('password')}
+                    className={`bg-gray-800 text-white placeholder-gray-400 ${error.password ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                  />
 
-                <div
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
-                >
-                  {showPassword ? <EyeOff /> : <Eye />}
-                </div>
+                  <div
+                    onClick={togglePasswordVisibility}
+                    className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
+                  >
+                    {showPassword ? <EyeOff /> : <Eye />}
+                  </div>
 
                 </div>
                 {error.password && (
@@ -335,22 +335,22 @@ export default function Signup() {
               <div className="space-y-2">
                 <Label htmlFor="confirmPassword" className="text-gray-300">Confirm Password</Label>
                 <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  onFocus={() => handleFocus('confirmPassword')}
-                  className={`bg-gray-800 text-white placeholder-gray-400 ${error.confirmPassword ? 'border-red-500' : 'border-gray-700'
-                    }`}
-                />
-                <div
-                  onClick={toggleConfirmPasswordVisibility}
-                  className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
-                >
-                  {showConfirmPassword ? <EyeOff /> : <Eye />}
-                </div>
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    placeholder="Confirm your password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onFocus={() => handleFocus('confirmPassword')}
+                    className={`bg-gray-800 text-white placeholder-gray-400 ${error.confirmPassword ? 'border-red-500' : 'border-gray-700'
+                      }`}
+                  />
+                  <div
+                    onClick={toggleConfirmPasswordVisibility}
+                    className="absolute inset-y-0 right-3 flex items-center cursor-pointer text-gray-400"
+                  >
+                    {showConfirmPassword ? <EyeOff /> : <Eye />}
+                  </div>
                 </div>
                 {error.confirmPassword && (
                   <div className="text-red-300 text-sm">{error.confirmPassword}</div>
@@ -367,12 +367,12 @@ export default function Signup() {
             </form>
           )}
 
-          <div className="mt-6 text-center">
+          {/* <div className="mt-6 text-center">
             <p className="text-gray-400">
               Already have an account?{' '}
 
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -403,27 +403,27 @@ export default function DepositTab() {
             <table className="min-w-full table-auto text-sm text-gray-200">
               <thead className="bg-gray-700">
                 <tr>
-                  <th className="px-4 py-2 text-left">SN</th>
-                  <th className="px-4 py-2 text-left">Amount</th>
-                  <th className="px-4 py-2 text-left">Method</th>
-                  <th className="px-4 py-2 text-left">Status</th>
-                  <th className="px-4 py-2 text-left">Action</th>
+                  <th className="px-8 py-2 text-left">SN</th>
+                  <th className="px-8 py-2 text-left">Amount</th>
+                  <th className="px-8 py-2 text-left">Method</th>
+                  <th className="px-8 py-2 text-left">Status</th>
+                  <th className="px-8 py-2 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {deposits.map((deposit, index) => (
                   <tr key={deposit.id} className="border-t border-gray-700">
-                    <td className="px-4 py-2">{index + 1}</td>
-                    <td className="px-4 py-2">{deposit.amount}</td>
-                    <td className="px-4 py-2">{deposit.method}</td>
+                    <td className="px-8 py-2">{index + 1}</td>
+                    <td className="px-8 py-2">{deposit.amount}</td>
+                    <td className="px-8 py-2">{deposit.method}</td>
 
                     <td
-                      className={`px-4 py-2 ${deposit.status === 1 ? "text-green-500" : "text-red-500"
+                      className={`px-8 py-2 ${deposit.status === 1 ? "text-green-500" : "text-red-500"
                         }`}
                     >
                       {deposit.status === 1 ? "Confirmed" : "pending"}
                     </td>
-                    <td className="px-4 py-2">
+                    <td className="px-8 py-2">
                       {deposit.status === 0 && (
                         <Button
                           onClick={() => handleViewDeposit(deposit)}

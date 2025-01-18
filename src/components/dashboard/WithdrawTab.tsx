@@ -279,35 +279,35 @@ export default function WithdrawTab() {
             <CardHeader>
               <CardTitle style={{ color: 'white' }}>Recent Withdrawal History</CardTitle>
             </CardHeader>
-            <CardContent>
-              <table className="w-full">
+            <CardContent className="overflow-x-auto">
+              <table className="min-w-full table-auto">
                 <thead>
                   <tr className="text-left text-gray-400">
-                    <th className="pb-4">SN</th>
+                    <th className="px-8 py-2">SN</th>
                     {isAdmin && (
-                      <th className="pb-4">User</th>
+                      <th className="px-8 py-2">User</th>
                     )}
-                    <th className="pb-4">Amount</th>
-                    <th className="pb-4">Date</th>
-                    <th className="pb-4">Wallet Address</th>
-                    <th className="pb-4">Crypto Currency</th>
-                    <th className="pb-4">Status</th>
+                    <th className="px-8 py-2">Amount</th>
+                    <th className="px-8 py-2">Date</th>
+                    <th className="px-8 py-2">Wallet Address</th>
+                    <th className="px-8 py-2">Crypto Currency</th>
+                    <th className="px-8 py-2">Status</th>
                     {isAdmin && (
-                      <th className="pb-4">Action</th>
+                      <th className="px-8 py-2">Action</th>
                     )}
                   </tr>
                 </thead>
                 <tbody>
                   {history.map((tx, i) => <tr key={tx.id} className="border-t border-gray-700">
-                    <td className="py-4 text-white">{i + 1}</td>
+                    <td className="px-8 py-2 text-white">{i + 1}</td>
                     {isAdmin && (
-                      <td className="py-4 text-white">{tx.user && tx.user.name}</td>
+                      <td className="px-8 py-2 text-white">{tx.user && tx.user.name}</td>
                     )}
-                    <td className={`py-4 ${tx.status == 1 ? 'text-green-400' : 'text-red-400'}`}>{tx.amount && tx.amount}</td>
-                    <td className="py-4 text-white">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
-                    <td className="py-4 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
-                    <td className="py-4 text-white">{tx.method != null ? tx.method : "NULL"}</td>
-                    <td className="py-4 text-white">
+                    <td className={`px-8 py-2 ${tx.status == 1 ? 'text-green-400' : 'text-red-400'}`}>{tx.amount && tx.amount}</td>
+                    <td className="px-8 py-2 text-white">{tx.withdrawal != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td>
+                    <td className="px-8 py-2 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
+                    <td className="px-8 py-2 text-white">{tx.method != null ? tx.method : "NULL"}</td>
+                    <td className="px-8 py-2 text-white">
                       <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
                         }`}>
                         {tx.status === 1 ? 'completed' : 'pending'}
@@ -315,7 +315,7 @@ export default function WithdrawTab() {
                       </span>
                     </td>
                     {isAdmin && (
-                      <td className={`px-4 py-2 ${tx.status === 1
+                      <td className={`px-8 py-2 py-2 ${tx.status === 1
                         ? "text-green-500"
                         : "text-red-500"
                         }`}>
