@@ -407,7 +407,7 @@ export default function DepositTab() {
                       className="bg-green-600 hover:bg-green-500 text-white"
                       disabled={loading}
                     >
-                      {loading ? "Processing..." : "Notify Admin"}
+                      {loading ? "Processing..." : "Payment Completed"}
                     </Button>
                   ) : (
                     <Button
