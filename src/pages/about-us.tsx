@@ -29,8 +29,12 @@ export default function AboutUs() {
             <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in-up bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400">
               About Coinshares Mining
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-3xl">
-              Supporting the Bitcoin blockchain through rapidly expanding large-scale mining in the United States and El Salvador.
+            <p className="text-xl md:text-2xl mb-8 text-gray-300 max-w-full">
+              Coinshares Mining is a leading Bitcoin mining company located in North America and El Salvador. Coinshares operates Bitcoin mining facilities primarily in North America and El Salvador which is the largest Bitcoin mining operation in North America and El Salvador by capacity.
+              <br />
+              <br />
+              Our capacity is significant, with a reported hash rate of 100 EH/s at the end of 2024. In 2024, we reported a total revenue of $280.7 million. We are also involved in initiatives to mitigate environmental hazards by using innovative energy solutions, which could potentially offer environmental benefits.
+              {/* Supporting the Bitcoin blockchain through rapidly expanding large-scale mining in the United States and El Salvador. */}
             </p>
           </div>
         </section>

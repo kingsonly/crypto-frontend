@@ -59,8 +59,10 @@ export default function DepositTab() {
     string | null
   >(null);
   const [deposits, setDeposits] = useState([]);
+  const [selectedCryptoWallet, setSelectedCryptoWallet] = useState<any>({});
   useEffect(() => {
     let getToken: any = JSON.parse(localStorage.getItem("user"));
+    fetchWalletAddress();
     if (getToken && getToken.token) {
       // console.log('message',getToken)
       setToken(getToken.token);
@@ -70,6 +72,7 @@ export default function DepositTab() {
   }, []);
 
   const handleViewDeposit = (deposit: any) => {
+    setSelectedCrypto(deposit.method);
     setAllDeposit(deposit); // Set the deposit being viewed
     setIsModalOpen(true); // Open the modal
     setIsDepositComplete(true); // Show the barcode and "Confirm Payment" button
@@ -273,6 +276,30 @@ export default function DepositTab() {
       });
   };
 
+  const fetchWalletAddress = async () => {
+
+    try {
+      const response = await axios.get(`${baseUrl}/wallet-address`);
+
+      if (response.data.status === "success") {
+        let filteredAddressStructure: any = {}
+        response.data.data.map((address: any) => {
+          filteredAddressStructure[address.name] = address.address
+        });
+
+        setSelectedCryptoWallet(filteredAddressStructure);
+      } else {
+        console.error("Error fetching investments: ", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching investments:", error);
+
+    } finally {
+
+
+    }
+  };
+
   return (
     <div className="space-y-8 text-white">
       {!isAdmin && (
@@ -343,7 +370,7 @@ export default function DepositTab() {
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full p-1 mb-2 text-black rounded-lg text-lg"
+                      className="w-full p-1 mb-2 text-white rounded-lg text-lg"
                     />
                     {depositError && (
                       <p className="text-red-500 text-sm">{depositError}</p>
@@ -351,13 +378,13 @@ export default function DepositTab() {
                   </>
                 ) : (
                   <div className="flex flex-col items-center">
-                    <img
-                      src="https://www.barcodesinc.com/generator/image.php?code=1234567890&style=197&type=C128B&width=200&height=100&xres=1&font=3"
-                      alt="Barcode"
-                      className="mb-4"
-                    />
+                    <h2> Wallet Address</h2>
                     <p className="text-sm text-white mt-2">
-                      Wallet Address: wallet-address-example
+                      <h3>
+                        {selectedCryptoWallet[selectedCrypto]}
+
+                      </h3>
+
                     </p>
                   </div>
                 )}

@@ -5,11 +5,35 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Trash2, Wallet } from "lucide-react";
+
+function Notification({
+  message,
+  type,
+}: {
+  message: string;
+  type: "success" | "error";
+}) {
+  return (
+    <div
+      className={`p-3 rounded-lg mb-4 text-sm ${type === "success" ? "bg-green-600 text-white" : "bg-red-600 text-white"
+        }`}
+    >
+      {message}
+    </div>
+  );
+}
 
 export default function ProfileTab() {
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenFund, setIsModalOpenFund] = useState(false);
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+  const [isSubmittingFundWallet, setIsSubmittingFundWallet] = useState(false);
+  const [isSubmittingDeleteUser, setIsSubmittingDeleteUser] = useState(false);
+  const [amount, setAmount] = useState<number>(0);
+  const [activeUser, setActiveUser] = useState<number>(0);
   const [showModal, setShowModal] = useState(false);
 
   // Change password form states
@@ -22,6 +46,13 @@ export default function ProfileTab() {
   const [loadUser, setLoadUser] = useState<boolean>(false);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [token, setToken] = useState<string>("");
+
+  const [notification, setNotification] = useState<
+    {
+      message: string;
+      type: "success" | "error";
+    } | null
+  >(null);
   const navigate = useNavigate();
   // State to hold user data
   const [userData, setUserData] = useState({
@@ -58,6 +89,86 @@ export default function ProfileTab() {
     localStorage.removeItem("user"); // Clear user data
     navigate("/login"); // Redirect to the login page (or your desired route)
   };
+
+  const fundWallet = (id: number) => {
+    setActiveUser(id);
+    setIsModalOpenFund(true);
+  }
+  const deleteUser = (id: number) => {
+    setActiveUser(id);
+    setIsModalOpenDelete(true);
+  }
+
+  const handleFundWallet = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingFundWallet(true);
+    try {
+      const token = JSON.parse(localStorage.getItem("user") || "{}").token;
+
+      const response = await axios.post(
+        `${baseUrl}/wallet/special-deposit/${activeUser}`, // Replace with your endpoint
+        {
+          amount: amount // Send currentPassword and newPassword to the backend
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setIsSubmittingFundWallet(false);
+        setNotification({
+          message: "Deposit successfully.",
+          type: "success",
+        });
+        setIsModalOpenFund(false);
+      } else {
+        setMessage(response.data.message || "Failed to fund wallet.");
+        setIsSubmittingFundWallet(false);
+      }
+    } catch (error: any) {
+      setMessage(error.response?.data?.message || "An error occurred. Please try again.");
+      setIsSubmittingFundWallet(false);
+    } finally {
+      setIsSubmittingFundWallet(false);
+    }
+  }
+  const handleDeleteUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingDeleteUser(true);
+    try {
+      const token = JSON.parse(localStorage.getItem("user") || "{}").token;
+
+      const response = await axios.delete(
+        `${baseUrl}/user/destroy/${activeUser}`, // Replace with your endpoint
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setIsSubmittingFundWallet(false);
+        getUsers()
+        setNotification({
+          message: "Deleted successfully.",
+          type: "success",
+        });
+        setIsModalOpenDelete(false);
+      } else {
+
+        setIsSubmittingDeleteUser(false);
+      }
+    } catch (error: any) {
+      setMessage(error.response?.data?.message || "An error occurred. Please try again.");
+      setIsSubmittingDeleteUser(false);
+    } finally {
+      setIsSubmittingDeleteUser(false);
+    }
+  }
 
   // Handle password change
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -133,6 +244,8 @@ export default function ProfileTab() {
     }
     )
   };
+
+
 
   const convertToDateFormat = (isoString) => {
     const date = new Date(isoString);
@@ -294,6 +407,12 @@ export default function ProfileTab() {
 
       {isAdmin && (
         <div className="space-y-8">
+          {notification && (
+            <Notification
+              message={notification.message}
+              type={notification.type}
+            />
+          )}
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
             All Users
           </h2>
@@ -312,6 +431,7 @@ export default function ProfileTab() {
                         <th className="px-8 py-2">Username</th>
                         <th className="px-8 py-2">Email</th>
                         <th className="px-8 py-2">Role</th>
+                        <th className="px-8 py-2">Action</th>
                         {/* <th className="pb-4">Date</th> */}
                       </tr>
                     </thead>
@@ -328,12 +448,96 @@ export default function ProfileTab() {
 
                           </span>
                         </td>
+                        <td className="px-8 py-2 text-white ">
+                          <div className="flex space-x-2">
+                            <Trash2 className="text-red-500" onClick={() => deleteUser(user.id)} />
+                            <Wallet className="text-green-500" onClick={() => fundWallet(user.id)} />
+                          </div>
+
+                        </td>
                         {/* <td className="py-4 text-white">{user != null ? convertToDateFormat(tx.withdrawal.created_at) : "NULL"}</td> */}
                       </tr>
                       )}
                     </tbody>
 
                   </table>
+                  {isModalOpenFund && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-full">
+                      <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-64 sm:w-1/2 md:w-3/4 lg:w-1/2 xl:w-112 relative">
+
+
+                        <h3 className="text-lg font-semibold text-white mb-4">
+                          Fund
+                        </h3>
+                        <form className="space-y-4" onSubmit={handleFundWallet}>
+                          <div className="space-y-2">
+                            <Input
+                              type="number"
+                              value={amount}
+                              onChange={(e) => setAmount(e.target.value)}
+                              className="bg-gray-700 border-gray-600"
+                              placeholder="Enter amount"
+                            />
+                          </div>
+                          <div className="flex justify-end space-x-4 mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsModalOpenFund(false)}
+                              className="bg-gray-600 hover:bg-gray-500"
+                              disabled={isSubmittingFundWallet}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="submit"
+                              className="bg-teal-500 hover:bg-teal-400"
+                              disabled={isSubmittingFundWallet}
+                            >
+                              {isSubmittingFundWallet ? "Funding..." : "Fund"}
+                            </Button>
+                          </div>
+                        </form>
+
+                      </div>
+
+                    </div>
+                  )}
+
+                  {isModalOpenDelete && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-full">
+                      <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-64 sm:w-1/2 md:w-3/4 lg:w-1/2 xl:w-112 relative">
+
+
+                        <h3 className="text-lg font-semibold text-white mb-4">
+                          Delete User
+                        </h3>
+                        <form className="space-y-4" onSubmit={handleDeleteUser}>
+                          <div className="space-y-2">
+                            Are You Sure You Want to Delete This User?
+                          </div>
+                          <div className="flex justify-end space-x-4 mt-4">
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsModalOpenDelete(false)}
+                              className="bg-gray-600 hover:bg-gray-500"
+                              disabled={isSubmittingDeleteUser}
+                            >
+                              Cancel
+                            </Button>
+                            <Button
+                              type="submit"
+                              className="bg-red-500 hover:bg-red-400"
+                              disabled={isSubmittingDeleteUser}
+                            >
+                              {isSubmittingDeleteUser ? "Deleting..." : "Delete"}
+                            </Button>
+                          </div>
+                        </form>
+
+                      </div>
+
+                    </div>
+                  )}
                 </>
               )}
 
