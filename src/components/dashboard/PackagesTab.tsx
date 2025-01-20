@@ -456,7 +456,7 @@ export default function PackagesTab() {
                 <li>Minimum Amount: ${inv.minimum_amount}</li>
                 <li>Maximum Amount: ${inv.maximum_amount}</li>
                 <li>Duration: {inv.duration} days</li>
-                <li>Monthly Profit: ${inv.rate} %</li>
+                <li>Monthly Profit: {inv.rate} %</li>
               </ul>
               {!isAdmin && (
                 <Button className="w-full mt-4" onClick={() => handleInvestNow(inv)}>
