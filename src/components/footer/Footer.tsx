@@ -21,7 +21,7 @@ const Footer = () => {
         <div>
           <h4 className="text-xl font-semibold mb-4 text-teal-300">Connect</h4>
           <ul className="space-y-2 text-gray-400">
-            <li><a href="#" className="hover:text-teal-400 transition-colors">Twitter</a></li>
+            <li><a href="https://x.com/coinshares_" className="hover:text-teal-400 transition-colors">X (Twitter)</a></li>
           </ul>
         </div>
       </div>

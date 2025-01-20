@@ -254,8 +254,10 @@ export default function WithdrawTab() {
 
                     onChange={(e) => handleInput(e, stateSetters)}
                   >
+                    <option></option>
                     <option>Bitcoin</option>
                     <option>Ethereum</option>
+                    <option>USDT</option>
                   </select>
                 </div>
 

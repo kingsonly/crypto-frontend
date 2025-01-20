@@ -13,6 +13,7 @@ import InvestmentHistoryTab from '@/components/dashboard/InvestmentHistoryTab'
 import EarningsTab from '@/components/dashboard/EarningsTab'
 import ProfileTab from '@/components/dashboard/ProfileTab'
 import DashboardTab from '@/components/dashboard/DashboardTab'
+import WalletAddressTab from '@/components/dashboard/WalletAddressTab'
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('dashboard')
@@ -55,6 +56,8 @@ export default function AdminDashboard() {
         return <EarningsTab />
       case 'profile':
         return <ProfileTab />
+      case 'walletAddress':
+        return <WalletAddressTab />
       default:
         return <DashboardTab />
     }
@@ -69,24 +72,41 @@ export default function AdminDashboard() {
     { name: 'Investment History', icon: <History className="h-5 w-5" />, id: 'investment-history' },
     { name: 'Earnings', icon: <DollarSign className="h-5 w-5" />, id: 'earnings' },
     { name: file, icon: <User className="h-5 w-5" />, id: 'profile' },
+    { name: 'Wallet Address', icon: <Wallet className="h-5 w-5" />, id: 'walletAddress' },
   ];
 
   const NavContent = () => (
     <nav>
       <ul className="space-y-2">
         {menuItems.map((item) => (
-          <li key={item.id}>
-            <Button
-              className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''} hover:bg-accent hover:text-accent-foreground`}
-              onClick={() => {
-                setActiveTab(item.id);
-                setIsMobileMenuOpen(false);
-              }}
-            >
-              {item.icon}
-              <span className="ml-2">{item.name}</span>
-            </Button>
-          </li>
+
+          item.name !== "Wallet Address" ?
+            <li key={item.id}>
+              <Button
+                className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''} hover:bg-accent hover:text-accent-foreground`}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setIsMobileMenuOpen(false);
+                }}
+              >
+                {item.icon}
+                <span className="ml-2">{item.name}</span>
+              </Button>
+            </li>
+            : item.name == "Wallet Address" && isAdmin ?
+              <li key={item.id}>
+                <Button
+                  className={`w-full justify-start ${activeTab === item.id ? 'bg-gray-800' : ''} hover:bg-accent hover:text-accent-foreground`}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setIsMobileMenuOpen(false);
+                  }}
+                >
+                  {item.icon}
+                  <span className="ml-2">{item.name}</span>
+                </Button>
+              </li>
+              : null
         ))}
       </ul>
     </nav>
