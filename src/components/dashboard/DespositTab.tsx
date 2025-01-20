@@ -327,7 +327,7 @@ export default function DepositTab() {
                     className="h-16 flex flex-col items-center justify-center text-black hover:text-black text-sm"
                   >
                     <Bitcoin className="h-6 w-6 mb-2" />
-                    {crypto}{crypto! == "Bitcoin" ? "(ERC-20)" : null}
+                    {crypto}{crypto !== "Bitcoin" ? "(ERC-20)" : null}
                   </Button>
                 ))}
               </div>
@@ -379,17 +379,17 @@ export default function DepositTab() {
                 ) : (
                   <div className="flex flex-col items-center">
                     <h2> Wallet Address</h2>
-                    <p className="text-sm text-white mt-2">
-                      <h3>
+                    <p className=" text-white mt-2">
+                      <h2 className="break-all">
                         {selectedCryptoWallet[selectedCrypto]}
 
-                      </h3>
+                      </h2>
 
                     </p>
                   </div>
                 )}
 
-                <div className="flex justify-end space-x-4">
+                <div className="flex justify-end space-x-4 mt-4">
                   <Button
                     onClick={closeModal}
                     className="bg-gray-700 hover:bg-gray-600 text-white"
