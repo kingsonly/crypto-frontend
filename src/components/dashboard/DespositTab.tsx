@@ -47,6 +47,11 @@ export default function DepositTab() {
   const [allDeposit, setAllDeposit] = useState([]);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [loadDeposit, setLoadDeposit] = useState(false);
+  const encrytionLayer: any = {
+    Bitcoin: "",
+    Ethereum: "ERC-20",
+    USDT: "TRC20",
+  }
 
   const [notification, setNotification] = useState<{
     message: string;
@@ -327,7 +332,7 @@ export default function DepositTab() {
                     className="h-16 flex flex-col items-center justify-center text-black hover:text-black text-sm"
                   >
                     <Bitcoin className="h-6 w-6 mb-2" />
-                    {crypto}{crypto !== "Bitcoin" ? "(ERC-20)" : null}
+                    {crypto} {encrytionLayer[crypto]}
                   </Button>
                 ))}
               </div>
