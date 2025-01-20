@@ -327,7 +327,7 @@ export default function DepositTab() {
                     className="h-16 flex flex-col items-center justify-center text-black hover:text-black text-sm"
                   >
                     <Bitcoin className="h-6 w-6 mb-2" />
-                    {crypto}
+                    {crypto}{crypto! == "Bitcoin" ? "(ERC-20)" : null}
                   </Button>
                 ))}
               </div>
