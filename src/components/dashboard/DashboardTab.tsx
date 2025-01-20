@@ -46,6 +46,7 @@ export default function DashboardTab() {
     setTimeout(() => setShowPopup(false), 3000);
   };
 
+
   const fetchWalletBalance = async (token: string) => {
     try {
       const response = await axios.post(

@@ -193,8 +193,7 @@ export default function ProfileTab() {
       const response = await axios.post(
         `${baseUrl}/user/update/${userData.id}`, // Replace with your endpoint
         {
-          password:
-            "Password" // Send currentPassword and newPassword to the backend
+          password: newPassword // Send currentPassword and newPassword to the backend
 
         },
         {
@@ -546,7 +545,7 @@ export default function ProfileTab() {
         </div>
       )}
       {/* Modal */}
-      {isModalOpen && (
+      {/* {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg w-full max-w-md text-white space-y-4">
             <h3 className="text-xl font-semibold">Change Password</h3>
@@ -594,7 +593,7 @@ export default function ProfileTab() {
             </form>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   )
 }
