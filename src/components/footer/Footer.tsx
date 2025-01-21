@@ -22,6 +22,7 @@ const Footer = () => {
           <h4 className="text-xl font-semibold mb-4 text-teal-300">Connect</h4>
           <ul className="space-y-2 text-gray-400">
             <li><a href="https://x.com/coinshares_" className="hover:text-teal-400 transition-colors">X (Twitter)</a></li>
+            <li><a href="support@coinsharesmining.com" className="hover:text-teal-400 transition-colors"> support@coinsharesmining.com</a></li>
           </ul>
         </div>
       </div>
