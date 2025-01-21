@@ -150,7 +150,7 @@ export default function WalletAddressTab() {
             </CardHeader>
             <CardContent className="text-white">
               <ul className="space-y-2">
-                <li>{wallet.address}</li>
+                <li className="break-all min-h-[50px]">{wallet.address}</li>
               </ul>
 
               <Button className="w-full mt-4" onClick={() => updateWalletAddress(wallet.id)}>

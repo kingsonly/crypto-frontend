@@ -38,6 +38,7 @@ function Notification({
 
 export default function PackagesTab() {
   const [investments, setInvestments] = useState<Investment[]>([]);
+  const [isModalOpenUpdatePackage, setIsModalOpenUpdatePackage] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [newLoading, setNewLoading] = useState<boolean>(false);
   const [investButtonLoading, setInvestButtonLoading] = useState<boolean>(false);
@@ -49,6 +50,7 @@ export default function PackagesTab() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [indexLoading, setIndexLoading] = useState<number | null>(null);
+  const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "error";
@@ -58,10 +60,11 @@ export default function PackagesTab() {
     type: "success" | "error";
   } | null>(null);
   const [name, setName] = useState<string>("");
-  const [minimumAmount, setMinimumAmount] = useState<number>(null);
-  const [maximumAmount, setMaximumAmount] = useState<number>(null);
-  const [interestRate, setInterestRate] = useState<number>(null);
-  const [duration, setDuration] = useState<number>(null);
+  const [activeInvestment, setActiveInvestment] = useState<any>();
+  const [minimumAmount, setMinimumAmount] = useState<number>(0);
+  const [maximumAmount, setMaximumAmount] = useState<number>(0);
+  const [interestRate, setInterestRate] = useState<number>(0);
+  const [duration, setDuration] = useState<number>(0);
   const navigate = useNavigate();
   const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -86,6 +89,20 @@ export default function PackagesTab() {
     }
   }, []);
 
+  const triggerDelete = async (data: any) => {
+    setActiveInvestment(data)
+    setIsModalOpenDelete(true);
+  }
+  const triggerUpdate = async (data: any) => {
+    setIsModalOpenUpdatePackage(true)
+    setName(data.name)
+    setMinimumAmount(data.minimum_amount)
+    setMaximumAmount(data.maximum_amount)
+    setInterestRate(data.rate)
+    setDuration(data.duration)
+    console.table(data)
+    setActiveInvestment(data)
+  }
   const fetchInvestments = async (token: string) => {
     try {
       const response = await axios.get(`${baseUrl}/package`, {
@@ -223,6 +240,149 @@ export default function PackagesTab() {
         setNewLoading(false)
       })
   }
+  const updatePackage = async (e: React.FormEvent) => {
+
+    e.preventDefault();
+
+    setNewLoading(true)
+
+
+    if (name == "") {
+      setNotification({
+        message:
+          "Name field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (minimumAmount == null || !minimumAmount) {
+      setNotification({
+        message:
+          "The Minimum Amount field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (maximumAmount == null || !maximumAmount) {
+      setNotification({
+        message:
+          "The Maximum Amount field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (interestRate == null || !interestRate) {
+      setNotification({
+        message:
+          "The Interest Rate field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    if (duration == null || !duration) {
+      setNotification({
+        message:
+          "The Duration field is required",
+        type: "error",
+      });
+      setNewLoading(false)
+      return;
+    }
+
+    let data: any = {
+      name: name,
+      minimum_amount: minimumAmount,
+      maximum_amount: maximumAmount,
+      interest_rate: interestRate,
+      duration: duration,
+    }
+
+    setNotification(null);
+    await axios.post(
+      `${baseUrl}/package/update/${activeInvestment.id}`,
+      data,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include Bearer token in headers
+          'Content-Type': 'application/json', // Optional, specify content type
+        }
+      },
+    )
+      .then(function (response: any) {
+        if (response.data.status === "success")
+          alert("Package Updated Successfully")
+        setFullNotification({
+          message: "Package Updated Successfully",
+          type: "success",
+        })
+
+        fetchInvestments(token);
+        setNewLoading(false)
+      })
+      .catch((error: any) => {
+        alert("somthing went wrong ")
+        console.error("Error creating withdrwal request:", error);
+        setFullNotification({
+          message: "Something went wrong, couldn't create package",
+          type: "success",
+        })
+        setNewLoading(false)
+      })
+      .finally(() => {
+        setFullNotification(null);
+        setName("")
+        setActiveInvestment({})
+        setMinimumAmount(0)
+        setMaximumAmount(0)
+        setInterestRate(0)
+        setDuration(0)
+        setNewLoading(false)
+        setIsModalOpenUpdatePackage(false)
+      })
+  }
+
+  const handleDeletePackage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewLoading(true)
+    try {
+      const token = JSON.parse(localStorage.getItem("user") || "{}").token;
+
+      const response = await axios.delete(
+        `${baseUrl}/package/delete/${activeInvestment.id}`, // Replace with your endpoint
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.status === "success") {
+        setNewLoading(false)
+        fetchInvestments(token);
+        setNotification({
+          message: "Deleted successfully.",
+          type: "success",
+        });
+        setIsModalOpenDelete(false);
+      } else {
+
+        setNewLoading(false)
+      }
+    } catch (error: any) {
+      setNewLoading(false)
+    } finally {
+      setNewLoading(false)
+      setIsModalOpenDelete(false);
+    }
+  }
 
   const handleInvestNow = (inv: Investment) => {
     setSelectedInvestment(inv);
@@ -337,7 +497,12 @@ export default function PackagesTab() {
 
 
     <div className="space-y-8 text-white">
-
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+        />
+      )}
       {fullNotification && (
         <Notification
           message={fullNotification.message}
@@ -358,12 +523,7 @@ export default function PackagesTab() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {notification && (
-                <Notification
-                  message={notification.message}
-                  type={notification.type}
-                />
-              )}
+
               <form className="space-y-4" onSubmit={createPackage}>
                 {/* Name Input */}
                 <div className="space-y-2">
@@ -463,6 +623,18 @@ export default function PackagesTab() {
                   Invest Now
                 </Button>
               )}
+
+              {isAdmin && (
+                <div className="flex flex-row space-x-2">
+                  <Button className="w-full mt-4 bg-red-500" onClick={() => triggerDelete(inv)}>
+                    Delete
+                  </Button>
+                  <Button className="w-full mt-4 bg-green-500" onClick={() => triggerUpdate(inv)}>
+                    Update
+                  </Button>
+                </div>
+
+              )}
             </CardContent>
           </Card>
         ))}
@@ -507,6 +679,132 @@ export default function PackagesTab() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {isModalOpenUpdatePackage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-full">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-64 sm:w-1/2 md:w-3/4 lg:w-1/2 xl:w-112 relative">
+
+
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Update Package
+            </h3>
+
+            <form className="space-y-4" onSubmit={updatePackage}>
+              {/* Name Input */}
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Enter Package Name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => handleInput(e, stateSetters)}
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Minimum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="minimumAmount">Minimum Amount ($)</Label>
+                <Input
+                  id="minimumAmount"
+                  type="number"
+                  name="minimumAmount"
+                  value={minimumAmount}
+                  onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Minimum Amount"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Maximum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="maximumAmount">Maximum Amount ($)</Label>
+                <Input
+                  id="maximumAmount"
+                  type="number"
+                  name="maximumAmount"
+                  value={maximumAmount}
+                  onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Maximum Amount"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Interest Rate Input */}
+              <div className="space-y-2">
+                <Label htmlFor="interestRate">Interest Rate (%)</Label>
+                <Input
+                  id="interestRate"
+                  type="number"
+                  name="rate"
+                  value={interestRate}
+                  onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter Interest Rate"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+
+              {/* Maximum Amount Input */}
+              <div className="space-y-2">
+                <Label htmlFor="duration">Duration (Days)</Label>
+                <Input
+                  id="duration"
+                  type="number"
+                  name="duration"
+                  value={duration}
+                  onChange={(e) => handleInput(e, stateSetters)}
+                  placeholder="Enter duration"
+                  className="bg-gray-700 border-gray-600"
+                />
+              </div>
+              <div className="flex space-x-4">
+                <Button type="button" onClick={() => setIsModalOpenUpdatePackage(false)} className="w-full bg-red-500">Close</Button>
+                <Button type="submit" className="w-full bg-green-500">{newLoading ? "Processing..." : "Create Package"}</Button>
+              </div>
+
+            </form>
+          </div>
+
+        </div>
+      )}
+
+      {isModalOpenDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 w-full">
+          <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-64 sm:w-1/2 md:w-3/4 lg:w-1/2 xl:w-112 relative">
+
+
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Delete User
+            </h3>
+            <form className="space-y-4" onSubmit={handleDeletePackage}>
+              <div className="space-y-2">
+                Are You Sure You Want to Delete This Package?
+              </div>
+              <div className="flex justify-end space-x-4 mt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsModalOpenDelete(false)}
+                  className="bg-gray-600 hover:bg-gray-500"
+                  disabled={newLoading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  className="bg-red-500 hover:bg-red-400"
+                  disabled={newLoading}
+                >
+                  {newLoading ? "Deleting..." : "Delete"}
+                </Button>
+              </div>
+            </form>
+
+          </div>
+
         </div>
       )}
     </div>
