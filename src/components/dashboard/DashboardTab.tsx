@@ -105,9 +105,8 @@ export default function DashboardTab() {
   };
   const activeInvestment = async (token: string) => {
     try {
-      const response = await axios.post(
-        `${baseUrl}/transaction`,
-        { type: "investment" },
+      const response = await axios.get(
+        `${baseUrl}/transaction/active-investment`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -118,19 +117,7 @@ export default function DashboardTab() {
 
       if (response.data.status === "success") {
         const investment = response.data.data;
-        console.log("Investment data:", response.data.data);
-        // const total = investment.reduce(
-        //   (sum: number, inv: any) => sum + (inv.investment.amount || 0),
-        //   0
-        // );
-
-        const activeCount = investment.filter(
-          (inv: any) => inv.investment.status === 0
-        ).length;
-
-        // setTotalEarnings(total); // Update total earnings
-        // setEarningsBreakdown(earnings); // Set breakdown
-        setActiveInvestments(activeCount);
+        setActiveInvestments(investment);
       }
     } catch (error: any) {
     } finally {
