@@ -375,7 +375,7 @@ export default function DepositTab() {
                       value={depositAmount}
                       onChange={(e) => setDepositAmount(e.target.value)}
                       placeholder="Enter amount"
-                      className="w-full p-1 mb-2 text-white rounded-lg text-lg bg-black-500 "
+                      className="w-full p-1 mb-2 text-black rounded-lg text-lg bg-white-500 "
                     />
                     {depositError && (
                       <p className="text-red-500 text-sm">{depositError}</p>
