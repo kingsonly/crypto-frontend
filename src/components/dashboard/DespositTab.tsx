@@ -157,10 +157,10 @@ export default function DepositTab() {
 
           // Show notification after 1 second
 
-          setNotification({
-            message: "Deposit successfully.",
-            type: "success",
-          });
+          // setNotification({
+          //   message: "Please Make Payment and Click Confirm Payment.",
+          //   type: "success",
+          // });
 
           // Hide notification after another 3 seconds
           setTimeout(() => {
@@ -407,7 +407,7 @@ export default function DepositTab() {
                       className="bg-green-600 hover:bg-green-500 text-white"
                       disabled={loading}
                     >
-                      {loading ? "Processing..." : "Payment Completed"}
+                      {loading ? "Processing..." : "I've made payment"}
                     </Button>
                   ) : (
                     <Button
