@@ -6,6 +6,7 @@ import axios from "axios";
 
 export default function DashboardTab() {
   const [totalEarnings, setTotalEarnings] = useState<number>(0);
+  const [copyState, setCopyState] = useState<string>("Copy");
   const [reflink, setReflink] = useState<string>("");
   const [earningsBreakdown, setEarningsBreakdown] = useState<any[]>([]);
   const [walletBalance, setWalletBalance] = useState<number>(0);
@@ -43,7 +44,11 @@ export default function DashboardTab() {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(reflink);
     setShowPopup(true); // Show popup
-    setTimeout(() => setShowPopup(false), 3000);
+    setCopyState("Copied");
+    setTimeout(() => {
+      setShowPopup(false)
+      setCopyState("Copy")
+    }, 3000);
   };
 
 
