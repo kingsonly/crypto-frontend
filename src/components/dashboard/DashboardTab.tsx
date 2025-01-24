@@ -239,7 +239,7 @@ export default function DashboardTab() {
                 onClick={copyToClipboard}
                 className="bg-blue-500 text-white hover:bg-blue-400 rounded-lg px-4 py-2 focus:outline-none"
               >
-                Copy
+                {copyState}
               </Button>
             </div>
           </div>
