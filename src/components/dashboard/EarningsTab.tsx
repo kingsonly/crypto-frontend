@@ -61,7 +61,7 @@ export default function EarningsTab() {
             <p>Loading...</p>
           ) : (
             <p className="text-4xl font-bold text-green-400">
-              ${totalEarnings.toFixed(2)}
+              ${Number(totalEarnings).toFixed(2) ?? "0.00"}
             </p>
           )}
         </CardContent>

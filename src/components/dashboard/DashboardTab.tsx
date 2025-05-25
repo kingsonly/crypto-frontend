@@ -259,7 +259,9 @@ export default function DashboardTab() {
                   <div className="text-lg text-gray-400">Loading...</div>
                 ) : (
                   <div className="text-2xl font-bold text-green-400">
-                    ${walletBalance ? walletBalance.toFixed(2) : "0.00"}
+                    Number(e)?.toFixed?.(2) ?? '0.00'
+                    ${Number(walletBalance).toFixed(2) ?? "0.00"}
+                    {/* ${walletBalance ? Number(walletBalance).toFixed(2) : "0.00"} */}
                   </div>
                 )}
               </CardContent>
@@ -289,7 +291,7 @@ export default function DashboardTab() {
                   <p>Loading...</p>
                 ) : (
                   <p className="text-4xl font-bold text-green-400">
-                    ${totalEarnings.toFixed(2)}
+                    ${Number(totalEarnings).toFixed(2) ?? "0.00"}
                   </p>
                 )}
                 {/* <div className="text-2xl font-bold text-green-400">$12,543.00</div> */}
@@ -328,7 +330,7 @@ export default function DashboardTab() {
                   <p>Loading...</p>
                 ) : (
                   <p className="text-4xl font-bold text-green-400">
-                    ${totalDeposit.toFixed(2)}
+                    ${Number(totalDeposit).toFixed(2) ?? "0.00"}
                   </p>
                 )}
                 {/* <div className="text-2xl font-bold text-green-400">$12,543.00</div> */}
@@ -344,7 +346,7 @@ export default function DashboardTab() {
                   <p>Loading...</p>
                 ) : (
                   <p className="text-4xl font-bold text-green-400">
-                    ${totalWithdraw.toFixed(2)}
+                    ${Number(totalWithdraw).toFixed(2) ?? "0.00"}
                   </p>
                 )}
                 {/* <div className="text-2xl font-bold text-green-400">$12,543.00</div> */}
