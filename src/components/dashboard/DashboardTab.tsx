@@ -34,7 +34,7 @@ export default function DashboardTab() {
       activeInvestment(token);
       fetchWalletBalance(token); // Fetch wallet balance
       // fetchCryptoPrices(); // Fetch crypto prices
-      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+      setIsAdmin(getToken.is_admin === "1"); // Assuming `is_admin` is a boolean property
       getUsers();
       getDeposits();
       getWithdrawal();

@@ -82,7 +82,7 @@ export default function PackagesTab() {
       const getToken = JSON.parse(storedUser);
       setToken(getToken.token);
       fetchInvestments(getToken.token);
-      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+      setIsAdmin(getToken.is_admin === "1"); // Assuming `is_admin` is a boolean property
 
     } else {
       navigate("/login");

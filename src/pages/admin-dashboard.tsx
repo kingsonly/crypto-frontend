@@ -26,9 +26,9 @@ export default function AdminDashboard() {
     let getToken: any = JSON.parse(localStorage.getItem('user'));
     if (getToken && getToken.token) {
       setToken(getToken.token)
-      setIsAdmin(getToken.is_admin || false);
+      setIsAdmin(getToken.is_admin === "1");
 
-      if (getToken.is_admin == 1) {
+      if (getToken.is_admin === "1") {
         setFile("Users");
       } else {
         setFile("Profile");
