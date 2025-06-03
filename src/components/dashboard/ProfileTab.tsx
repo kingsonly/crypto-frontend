@@ -77,7 +77,7 @@ export default function ProfileTab() {
     const getToken: any = JSON.parse(localStorage.getItem("user") || "{}");
     if (getToken && getToken.token) {
       setToken(getToken.token)
-      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+      setIsAdmin(getToken.is_admin === "1"); // Assuming `is_admin` is a boolean property
     }
 
     getUsers();

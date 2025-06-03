@@ -71,7 +71,7 @@ export default function DepositTab() {
     if (getToken && getToken.token) {
       // console.log('message',getToken)
       setToken(getToken.token);
-      setIsAdmin(getToken.is_admin || false); // Assuming `is_admin` is a boolean property
+      setIsAdmin(getToken.is_admin === "1"); // Assuming `is_admin` is a boolean property
     }
     getDeposits();
   }, []);
