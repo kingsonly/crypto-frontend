@@ -259,7 +259,6 @@ export default function DashboardTab() {
                   <div className="text-lg text-gray-400">Loading...</div>
                 ) : (
                   <div className="text-2xl font-bold text-green-400">
-
                     ${Number(walletBalance).toFixed(2) ?? "0.00"}
                     {/* ${walletBalance ? Number(walletBalance).toFixed(2) : "0.00"} */}
                   </div>
