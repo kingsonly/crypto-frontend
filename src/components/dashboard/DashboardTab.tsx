@@ -93,7 +93,7 @@ export default function DashboardTab() {
         const earnings = response.data.data;
 
         const total = earnings.reduce(
-          (sum: number, inv: any) => Number(sum).toFixed(2) + (Number(inv.earning.amount).toFixed(2) || 0),
+          (sum: number, inv: any) => sum + (Number(inv.earning.amount) || 0),
           0
         );
 
@@ -168,7 +168,7 @@ export default function DashboardTab() {
 
         const deposits = response.data.data;
         const total = deposits.reduce(
-          (sum: number, inv: any) => Number(sum).toFixed(2) + (Number(inv.amount).toFixed(2) || 0),
+          (sum: number, inv: any) => sum + (Number(inv.amount) || 0),
           0
         );
         setTotalDeposit(total);
