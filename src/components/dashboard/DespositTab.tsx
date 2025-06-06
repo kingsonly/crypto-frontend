@@ -450,13 +450,13 @@ export default function DepositTab() {
                     <td className="px-8 py-2">{deposit.method}</td>
 
                     <td
-                      className={`px-8 py-2 ${deposit.status === 1 ? "text-green-500" : "text-red-500"
+                      className={`px-8 py-2 ${deposit.status == 1 ? "text-green-500" : "text-red-500"
                         }`}
                     >
-                      {deposit.status === 1 ? "Confirmed" : "pending"}
+                      {deposit.status == 1 ? "Confirmed" : "pending"}
                     </td>
                     <td className="px-8 py-2">
-                      {deposit.status === 0 && (
+                      {deposit.status == 0 && (
                         <Button
                           onClick={() => handleViewDeposit(deposit)}
                           // onClick={() => handleConfirmPayment()}

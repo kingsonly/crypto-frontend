@@ -310,18 +310,18 @@ export default function WithdrawTab() {
                     <td className="px-8 py-2 text-white">{tx.withdrawal != null ? tx.withdrawal.wallet_address : "NULL"}</td>
                     <td className="px-8 py-2 text-white">{tx.method != null ? tx.method : "NULL"}</td>
                     <td className="px-8 py-2 text-white">
-                      <span className={`px-2 py-1 rounded-full text-xs ${tx.status === 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
+                      <span className={`px-2 py-1 rounded-full text-xs ${tx.status == 1 ? 'bg-green-900 text-green-300' : 'bg-yellow-900 text-yellow-300'
                         }`}>
-                        {tx.status === 1 ? 'completed' : 'pending'}
+                        {tx.status == 1 ? 'completed' : 'pending'}
 
                       </span>
                     </td>
                     {isAdmin && (
-                      <td className={`px-8 py-2 py-2 ${tx.status === 1
+                      <td className={`px-8 py-2 py-2 ${tx.status == 1
                         ? "text-green-500"
                         : "text-red-500"
                         }`}>
-                        {tx.status === 0 && (
+                        {tx.status == 0 && (
                           <Button
                             onClick={() => approveWithdrawal(tx.id)}
                             // onClick={() => handleConfirmPayment()}
@@ -332,7 +332,7 @@ export default function WithdrawTab() {
                             {indexLoading == tx.id ? "Processing..." : "Approve"}
                           </Button>
                         )}
-                        {tx.status === 1 && (
+                        {tx.status == 1 && (
                           <span>Approved</span>
                         )}
                       </td>
