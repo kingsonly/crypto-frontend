@@ -511,18 +511,18 @@ export default function DepositTab() {
                       <td className="px-4 py-2">{deposit.method}</td>
 
                       <td
-                        className={`px-4 py-2 ${deposit.status === 1
+                        className={`px-4 py-2 ${deposit.status == 1
                           ? "text-green-500"
                           : "text-red-500"
                           }`}
                       >
-                        {deposit.status === 1 ? 'Confirmed' : 'pending'}
+                        {deposit.status == 1 ? 'Confirmed' : 'pending'}
                       </td>
-                      <td className={`px-4 py-2 ${deposit.status === 1
+                      <td className={`px-4 py-2 ${deposit.status == 1
                         ? "text-green-500"
                         : "text-red-500"
                         }`}>
-                        {deposit.status === 0 && (
+                        {deposit.status == 0 && (
                           <Button
                             onClick={() => approveDeposit(deposit.id)}
                             // onClick={() => handleConfirmPayment()}
@@ -533,7 +533,7 @@ export default function DepositTab() {
                             {indexLoading == deposit.id ? "Processing..." : "Approve"}
                           </Button>
                         )}
-                        {deposit.status === 1 && (
+                        {deposit.status == 1 && (
                           <span>Approved</span>
                         )}
                       </td>
